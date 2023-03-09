@@ -8,6 +8,9 @@
 * https://www.youtube.com/watch?v=F5mRW0jo-U4&ab_channel=freeCodeCamp.org
 * https://stackoverflow.com/questions/tagged/django?tab=Votes
 
+### Hosting tutorials
+* git commit -am "Automatic configuration with django-heroku"
+
 ### Algorithm Links
 * https://developers.google.com/optimization/scheduling/employee_scheduling#c_6
 * https://developers.google.com/optimization/cp
