@@ -9,7 +9,7 @@
 * https://stackoverflow.com/questions/tagged/django?tab=Votes
 
 ### Hosting tutorials
-* git commit -am "Automatic configuration with django-heroku"
+* [blogpost](https://realpython.com/django-hosting-on-heroku/#step-7-deploy-your-django-project-to-heroku)
 
 ### Algorithm Links
 * https://developers.google.com/optimization/scheduling/employee_scheduling#c_6
