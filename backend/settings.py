@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -27,9 +28,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['shifter-backend.herokuapp.com','127.0.0.1:8000']
 
-
-# Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',         #
     'django.contrib.auth',          #
@@ -44,6 +42,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.security.SecurityMiddleware',            #
     'django.contrib.sessions.middleware.SessionMiddleware',     #
     'django.middleware.common.CommonMiddleware',                #
@@ -126,6 +125,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # need to whitelist the url where the frontend is being served.
 #CORS_ORIGIN_WHITELIST = [ 
