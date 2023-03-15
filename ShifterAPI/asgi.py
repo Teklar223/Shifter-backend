@@ -10,5 +10,5 @@ https://docs.djangoproject.com/en/3.1/howto/deployment/asgi/
 from ShifterAPI import utils
 utils.setConfig()
 
-from configurations.wsgi import get_wsgi_application
+from configurations.asgi import get_asgi_application
 application = get_asgi_application()
