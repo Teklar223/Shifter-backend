@@ -6,7 +6,7 @@
 
 #### 1. ```python3 -m venv ./.venv``` </br>
 
-#### 2. Activate the envitonment: </br>
+#### 2. Activate the environment: </br>
 
 ##### Posix System:
 * ``` bash/zsh ``` - $ ``` source .venv/bin/activate ```
@@ -33,8 +33,5 @@
 ### Hosting tutorials
 * [blogpost](https://realpython.com/django-hosting-on-heroku/#step-7-deploy-your-django-project-to-heroku)
 
-### Algorithm Links
-* https://developers.google.com/optimization/scheduling/employee_scheduling#c_6
-* https://developers.google.com/optimization/cp
-* https://arxiv.org/ftp/arxiv/papers/1902/1902.01193.pdf
-* https://en.wikipedia.org/wiki/Constraint_programming
+### How to setup postgreDB for local/dev settingg
+* [blogpost](https://stackpython.medium.com/how-to-start-django-project-with-a-database-postgresql-aaa1d74659d8)

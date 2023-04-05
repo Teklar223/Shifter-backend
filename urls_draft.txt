@@ -1,0 +1,63 @@
+
+base_url = www.shifter-app.com/ <--- this is obviously subject to change, the rest should stay as is.
+
+# :slugs:
+things like - :smth_id: are called slugs - django has a built-in object called slug to handle them.
+(variables sent in the link, like base_url/1234567, here :company_id: = "1234567")
+
+# C.R.U.D: (in terms of REST)
+
+Create = Post
+Read   = GET
+Update = PUT
+DELETE = DELETE
+
+* every link below is also called an endpoint *
+
+# COMPANY #
+
+1. base_url/              <--- blocked for user, we might need create
+   base_url/:company_id:/ <--- allowed for company owners, read,update,delete
+
+# ROLE #
+
+2. base_url/:comapny_id:/role/
+   base_url/:comapny_id:/role/:role_id:
+
+3. base_url/:comapny_id:/role/req/
+   base_url/:comapny_id:/role/:role_id:/req/
+   base_url/:company_id:/role/req/:role_id:/
+   base_url/:comapny_id:/role/:role_id:/req/:role_id:/
+
+# TEAM #
+
+4. base_url/:company_id:/team/
+   base_url/:company_id:/team/:team_id:/
+
+
+5. base_url/:company_id:/team/req/
+   base_url/:company_id:/team/:team_id:/req/
+   base_url/:company_id:/team/req/:req_id:/
+   base_url/:company_id:/team/:team_id:/req/:req_id:/
+
+6. base_url/:company:id/team/employee/
+   base_url/:company:id/team/:team_id:/employee/
+   base_url/:company:id/team/employee/:employee_id:/
+   base_url/:company:id/team/:team_id:/employee/:employee_id:/
+
+# Employee #
+
+6. base_url/:company:id/employee/
+   base_url/:company:id/employee/:employee_id:/
+
+7. base_url/:company:id/employee/superior/
+   base_url/:company:id/employee/:employee_id:/superior/
+   base_url/:company:id/employee/superior/:sup_id:/
+   base_url/:company:id/employee/:employee_id:/superior/:sup_id:/
+
+8. base_url/:company:id/employee/role/
+   base_url/:company:id/employee/:employee_id:/role/
+   base_url/:company:id/employee/role/:role_id:/
+   base_url/:company:id/employee/:employee_id:/role/:role_id:/
+
+#  #

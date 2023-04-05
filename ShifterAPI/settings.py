@@ -131,8 +131,8 @@ class Dev(Base):
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
             'NAME': 'localdb',
-            'USER': 'developer',
-            'PASSWORD': 'developer',
+            'USER': 'postgres',
+            'PASSWORD': 'admin',
             'HOST': '127.0.0.1',
             'PORT': '5432',
         }

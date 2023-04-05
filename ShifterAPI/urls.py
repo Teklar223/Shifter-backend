@@ -15,13 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from rest_framework import routers
-from base_app import views
-
-router = routers.DefaultRouter()
-router.register(r'base_app', views.BaseView, 'base_app')
-
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include(router.urls)),
+    path('', include('base_app.urls')),
 ]
+
+# base_url = localhost:5800 | www.heroku-shifterapp.com
+# base_url/commpany/tasks/:id:  :id: - is called a slug
+# base_url/teams/
