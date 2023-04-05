@@ -6,6 +6,10 @@ from .serializers import UserSerializer
 from .models import User
 
 
+# TODO: remove import
+from .util import prints_args_kwargs
+
+
 # Create your views here.
 
 class BaseView(viewsets.ModelViewSet):
@@ -17,7 +21,7 @@ class BaseView(viewsets.ModelViewSet):
 
 # ####### Company Domain ###### #
 @api_view(['GET', 'POST', 'PUT', 'DELETE'])
-def CompanyView(request):
+def CompanyView(request, *args, **kwargs):
     if request.method == 'GET':
         pass
     if request.method == 'POST':
@@ -30,32 +34,45 @@ def CompanyView(request):
 
 # ######## Role Domain ######## #
 @api_view(['GET', 'POST', 'PUT', 'DELETE'])
-def RoleView(request):
+def RoleView(request, *args, **kwargs):
     if request.method == 'GET':
-        pass
+        prints_args_kwargs(args=args,kwargs=kwargs)
+        return Response("role view get")
+    
     if request.method == 'POST':
-        pass
+        prints_args_kwargs(args=args,kwargs=kwargs)
+        return Response("role view post")
+    
     if request.method == 'PUT':
-        pass
+        prints_args_kwargs(args=args,kwargs=kwargs)
+        return Response("role view put")
+    
     if request.method == 'DELETE':
-        pass
-
+        prints_args_kwargs(args=args,kwargs=kwargs)
+        return Response("role view delete")
 
 @api_view(['GET', 'POST', 'PUT', 'DELETE'])
-def RoleReqView(request):
+def RoleReqView(request, *args, **kwargs):
     if request.method == 'GET':
-        pass
-    if request.method == 'POST':
-        pass
-    if request.method == 'PUT':
-        pass
-    if request.method == 'DELETE':
-        pass
+        prints_args_kwargs(args=args,kwargs=kwargs)
+        return Response("role req view get")
+    
+    elif request.method == 'POST':
+        prints_args_kwargs(args=args,kwargs=kwargs)
+        return Response("role req view post")
+    
+    elif request.method == 'PUT':
+        prints_args_kwargs(args=args,kwargs=kwargs)
+        return Response("role req view put")
+    
+    elif request.method == 'DELETE':
+        prints_args_kwargs(args=args,kwargs=kwargs)
+        return Response("role req view delete")
 
 
 # ######## Team Domain ######## #
 @api_view(['GET', 'POST', 'PUT', 'DELETE'])
-def TeamView(request):
+def TeamView(request, *args, **kwargs):
     if request.method == 'GET':
         pass
     if request.method == 'POST':
@@ -67,7 +84,7 @@ def TeamView(request):
 
 
 @api_view(['GET', 'POST', 'PUT', 'DELETE'])
-def TeamReqView(request):
+def TeamReqView(request, *args, **kwargs):
     if request.method == 'GET':
         pass
     if request.method == 'POST':
@@ -79,7 +96,7 @@ def TeamReqView(request):
 
 
 @api_view(['GET', 'POST', 'PUT', 'DELETE'])
-def TeamEmployeeView(request):
+def TeamEmployeeView(request, *args, **kwargs):
     if request.method == 'GET':
         pass
     if request.method == 'POST':
@@ -93,7 +110,7 @@ def TeamEmployeeView(request):
 # ####### Employee Domain ####### #
 
 @api_view(['GET', 'POST', 'PUT', 'DELETE'])
-def EmployeeView(request):
+def EmployeeView(request, *args, **kwargs):
     if request.method == 'GET':
         pass
     if request.method == 'POST':
@@ -105,7 +122,7 @@ def EmployeeView(request):
 
 
 @api_view(['GET', 'POST', 'PUT', 'DELETE'])
-def EmployeeSuperiorView(request):
+def EmployeeSuperiorView(request, *args, **kwargs):
     if request.method == 'GET':
         pass
     if request.method == 'POST':
@@ -117,7 +134,7 @@ def EmployeeSuperiorView(request):
 
 
 @api_view(['GET', 'POST', 'PUT', 'DELETE'])
-def EmployeeRoleView(request):
+def EmployeeRoleView(request, *args, **kwargs):
     if request.method == 'GET':
         pass
     if request.method == 'POST':

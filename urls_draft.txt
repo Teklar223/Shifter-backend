@@ -27,7 +27,7 @@ DELETE = DELETE
 3. base_url/:comapny_id:/role/req/
    base_url/:comapny_id:/role/:role_id:/req/
    base_url/:company_id:/role/req/:role_id:/
-   base_url/:comapny_id:/role/:role_id:/req/:role_id:/
+   base_url/:comapny_id:/role/:role_id:/req/:req_id:/
 
 # TEAM #
 
