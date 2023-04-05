@@ -8,7 +8,7 @@ router.register(r'base_app', views.BaseView, 'base_app')
 
 '''
  note - this way of writing urls is confusing, consult the urls_draft.txt for reference
-        if you need it ( located in project root)
+        if you need it ( located in project root - note that its a draft and not yet a 1:1)
 '''
 
 company_patterns = [
@@ -18,10 +18,8 @@ company_patterns = [
 role_patterns = [
     path(f'api/<slug:{slugs.company_id}>/role/', views.RoleView),
     path(f'api/<slug:{slugs.company_id}>/role/<slug:{slugs.role_id}>/', views.RoleView),
-    path(f'api/<slug:{slugs.company_id}>/role/req>/', views.RoleReqView),
-    path(f'api/<slug:{slugs.company_id}>/role/{slugs.role_id}/req>/', views.RoleReqView),
-    path(f'api/<slug:{slugs.company_id}>/role/req>/{slugs.requisite_id}/', views.RoleReqView),
-    path(f'api/<slug:{slugs.company_id}>/role/{slugs.role_id}/req>/{slugs.requisite_id}/', views.RoleReqView),
+    path(f'api/<slug:{slugs.company_id}>/rolereq/', views.RoleReqView),
+    path(f'api/<slug:{slugs.company_id}>/rolereq/<slug:{slugs.role_id}>/', views.RoleReqView),
 ]
 
 team_patterns = [
