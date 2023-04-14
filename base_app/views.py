@@ -17,7 +17,6 @@ class BaseView(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     queryset = User.objects.all()
 
-# TODO: currently all views allow full CRUD, change in accordance with BL (for example CompanyView might have no GET - or just a restricted GET for admins)
 
 # ####### Company Domain ###### #
 @api_view(['GET', 'POST', 'PUT', 'DELETE'])

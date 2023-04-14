@@ -1,37 +1,46 @@
 from django.urls import path, include
 from rest_framework import routers
-from .util import slugs
+from .constants import * # all id's come from here
 from . import views
 
 router = routers.DefaultRouter()
 router.register(r'base_app', views.BaseView, 'base_app')
 
-'''
- note - this way of writing urls is confusing, consult the urls_draft.txt for reference
-        if you need it ( located in project root - note that its a draft and not yet a 1:1)
-'''
+# TODO: is passing auto-id needed? (for example role_requisite_id)
 
 company_patterns = [
-
+    path(f'api/', views.CompanyView),
+    path(f'api/<slug:{company_id}>/', views.CompanyView),
 ]
 
 role_patterns = [
-    path(f'api/<slug:{slugs.company_id}>/role/', views.RoleView),
-    path(f'api/<slug:{slugs.company_id}>/role/<slug:{slugs.role_id}>/', views.RoleView),
-    path(f'api/<slug:{slugs.company_id}>/rolereq/', views.RoleReqView),
-    path(f'api/<slug:{slugs.company_id}>/rolereq/<slug:{slugs.role_id}>/', views.RoleReqView),
+    path(f'api/<slug:{company_id}>/role/', views.RoleView),
+    path(f'api/<slug:{company_id}>/role/<slug:{role_id}>/', views.RoleView),
+    path(f'api/<slug:{company_id}>/rolereq/', views.RoleReqView),
+    path(f'api/<slug:{company_id}>/rolereq/<slug:{role_id}>/', views.RoleReqView),
 ]
 
 team_patterns = [
-
+    path(f'api/<slug:{company_id}>/team/', views.TeamView),
+    path(f'api/<slug:{company_id}>/team/<slug:{team_id}>/', views.TeamView),
+    path(f'api/<slug:{company_id}>/teamreq/', views.TeamReqView),
+    path(f'api/<slug:{company_id}>/teamreq/<slug:{team_id}>/', views.TeamReqView),
+    path(f'api/<slug:{company_id}>/teamemp/', views.TeamEmployeeView),
+    path(f'api/<slug:{company_id}>/teamemp/<slug:{team_id}>/', views.TeamEmployeeView),
 ]
 
 employee_patterns = [
-
+    path(f'api/<slug:{company_id}>/employee/', views.EmployeeView),
+    path(f'api/<slug:{company_id}>/employee/<slug:{employee_id}>/', views.EmployeeView),
+    path(f'api/<slug:{company_id}>/employeesup/', views.EmployeeSuperiorView),
+    path(f'api/<slug:{company_id}>/employeesup/<slug:{employee_id}>/', views.EmployeeSuperiorView),
+    # *****************************************TODO: ^ pass superior_id in request body?
+    path(f'api/<slug:{company_id}>/employeerole/', views.EmployeeRoleView),
+    path(f'api/<slug:{company_id}>/employeerole/<slug:{employee_id}>/', views.EmployeeRoleView),
 ]
 
 urlpatterns = [
-    path('api/', include(router.urls))
+    # path('api/', include(router.urls))
 ]
 
-urlpatterns = urlpatterns + company_patterns + role_patterns + team_patterns + employee_patterns
+urlpatterns += company_patterns + role_patterns + team_patterns + employee_patterns
