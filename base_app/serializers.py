@@ -1,7 +1,11 @@
 from rest_framework import serializers
-from .models import User
+from .models import *
 
-class UserSerializer(serializers.ModelSerializer):
+
+class CompanySerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
-        fields = ('Role', 'f_name', 'l_name')
+        model = Company
+        fields = "__all__"
+    
+    #def create(self, data):
+    #    return Company.objects.create(**data)

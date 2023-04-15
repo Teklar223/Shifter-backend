@@ -1,12 +1,5 @@
 from django.db import models
 
-class User(models.Model):
-    #TODO: remove (fetch something else in the frontend)
-    #team_ID    =   models.ForeignKey('Team', on_delete=models.CASCADE, null=True, blank=True)
-    Role        =   models.CharField(max_length=200, null=True, blank=True)
-    first_name  =   models.CharField(max_length=200, null=True, blank=True)
-    last_name   =   models.TextField(null=True, blank=True)
-
 '''Assuming auto-id by the ORM '''
 class Company(models.Model):
     # Company_ID

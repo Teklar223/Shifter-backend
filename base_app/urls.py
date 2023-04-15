@@ -3,9 +3,6 @@ from rest_framework import routers
 from .constants import * # all id's come from here
 from . import views
 
-router = routers.DefaultRouter()
-router.register(r'base_app', views.BaseView, 'base_app')
-
 # TODO: is passing auto-id needed? (for example role_requisite_id)
 
 company_patterns = [
@@ -39,8 +36,6 @@ employee_patterns = [
     path(f'api/<slug:{company_id}>/employeerole/<slug:{employee_id}>/', views.EmployeeRoleView),
 ]
 
-urlpatterns = [
-    # path('api/', include(router.urls))
-]
+urlpatterns = []
 
 urlpatterns += company_patterns + role_patterns + team_patterns + employee_patterns

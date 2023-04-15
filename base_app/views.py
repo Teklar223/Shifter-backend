@@ -1,30 +1,34 @@
+from django.http import HttpResponse, JsonResponse
 from rest_framework import authentication, permissions, viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from django.contrib.auth.models import User
-from .serializers import UserSerializer
-from .models import User
+from rest_framework.parsers import JSONParser
+from .serializers import *
+from .constants import * # id's come from heres
 
 
 # TODO: remove import
 from .util import prints_args_kwargs
 
-
-# Create your views here.
-
-class BaseView(viewsets.ModelViewSet):
-    # The viewsets base class provides the implementation for CRUD operations by default
-    serializer_class = UserSerializer
-    queryset = User.objects.all()
-
-
 # ####### Company Domain ###### #
 @api_view(['GET', 'POST', 'PUT', 'DELETE'])
 def CompanyView(request, *args, **kwargs):
     if request.method == 'GET':
-        pass
+        if company_id in kwargs:
+            company = Company.objects.get(id = kwargs.get(company_id))
+            serializer = CompanySerializer(company, many=False)
+            return JsonResponse(serializer.data, safe=False)
+        else:
+            company = Company.objects.all()
+            serializer = CompanySerializer(company, many=True)
+            return JsonResponse(serializer.data, safe=False)
     if request.method == 'POST':
-        pass
+        data = JSONParser().parse(request)
+        serializer = CompanySerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data, status=201)
+        return JsonResponse(serializer.errors, status=400)
     if request.method == 'PUT':
         pass
     if request.method == 'DELETE':
