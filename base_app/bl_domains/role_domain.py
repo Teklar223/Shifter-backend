@@ -2,7 +2,7 @@ from django.http import JsonResponse
 from rest_framework.parsers import JSONParser
 from ..constants import role_id
 from ..models import Role,CompanyRoleRequisite
-from ..serializers import CompanySerializer #TODO
+from ..serializers import RoleSerializer, RoleRequisiteSerializer
 
 ''' Role  '''
 
