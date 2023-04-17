@@ -5,109 +5,83 @@ from rest_framework.decorators import api_view
 from rest_framework.parsers import JSONParser
 from .serializers import *
 from .constants import * # id's come from heres
-
-
-# TODO: remove import
-from .util import prints_args_kwargs
+from .bl_domains.company_domain import *
+from .bl_domains.employee_domain import *
+from .bl_domains.role_domain import *
+from .bl_domains.team_domain import *
 
 # ####### Company Domain ###### #
 @api_view(['GET', 'POST', 'PUT', 'DELETE'])
 def CompanyView(request, *args, **kwargs):
     if request.method == 'GET':
-        if company_id in kwargs:
-            company = Company.objects.get(id = kwargs.get(company_id))
-            serializer = CompanySerializer(company, many=False)
-            return JsonResponse(serializer.data, safe=False)
-        else:
-            company = Company.objects.all()
-            serializer = CompanySerializer(company, many=True)
-            return JsonResponse(serializer.data, safe=False)
+        return CompanyGet(request, *args, **kwargs)
     if request.method == 'POST':
-        data = JSONParser().parse(request)
-        serializer = CompanySerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return JsonResponse(serializer.data, status=201)
-        return JsonResponse(serializer.errors, status=400)
+        return CompanyPost(request, *args, **kwargs)
     if request.method == 'PUT':
-        pass
+        return CompanyPut(request, *args, **kwargs)
     if request.method == 'DELETE':
-        pass
+        return CompanyDelete(request, *args, **kwargs)
 
 
 # ######## Role Domain ######## #
 @api_view(['GET', 'POST', 'PUT', 'DELETE'])
 def RoleView(request, *args, **kwargs):
     if request.method == 'GET':
-        prints_args_kwargs(args=args,kwargs=kwargs)
-        return Response("role view get")
-    
+        return RoleGet(request, *args, **kwargs)
     if request.method == 'POST':
-        prints_args_kwargs(args=args,kwargs=kwargs)
-        return Response("role view post")
-    
+        return RolePost(request, *args, **kwargs)
     if request.method == 'PUT':
-        prints_args_kwargs(args=args,kwargs=kwargs)
-        return Response("role view put")
-    
+        return RolePut(request, *args, **kwargs)
     if request.method == 'DELETE':
-        prints_args_kwargs(args=args,kwargs=kwargs)
-        return Response("role view delete")
+        return RoleDelete(request, *args, **kwargs)
 
 @api_view(['GET', 'POST', 'PUT', 'DELETE'])
 def RoleReqView(request, *args, **kwargs):
     if request.method == 'GET':
-        prints_args_kwargs(args=args,kwargs=kwargs)
-        return Response("role req view get")
-    
-    elif request.method == 'POST':
-        prints_args_kwargs(args=args,kwargs=kwargs)
-        return Response("role req view post")
-    
-    elif request.method == 'PUT':
-        prints_args_kwargs(args=args,kwargs=kwargs)
-        return Response("role req view put")
-    
-    elif request.method == 'DELETE':
-        prints_args_kwargs(args=args,kwargs=kwargs)
-        return Response("role req view delete")
+        return RoleRequisiteGet(request, *args, **kwargs)
+    if request.method == 'POST':
+        return RoleRequisitePost(request, *args, **kwargs)
+    if request.method == 'PUT':
+        return RoleRequisitePut(request, *args, **kwargs)
+    if request.method == 'DELETE':
+        return RoleRequisiteDelete(request, *args, **kwargs)
 
 
 # ######## Team Domain ######## #
 @api_view(['GET', 'POST', 'PUT', 'DELETE'])
 def TeamView(request, *args, **kwargs):
     if request.method == 'GET':
-        pass
+        return TeamGet(request, *args, **kwargs)
     if request.method == 'POST':
-        pass
+        return TeamPost(request, *args, **kwargs)
     if request.method == 'PUT':
-        pass
+        return TeamPut(request, *args, **kwargs)
     if request.method == 'DELETE':
-        pass
+        return TeamDelete(request, *args, **kwargs)
 
 
 @api_view(['GET', 'POST', 'PUT', 'DELETE'])
 def TeamReqView(request, *args, **kwargs):
     if request.method == 'GET':
-        pass
+        return TeamRequisiteGet(request, *args, **kwargs)
     if request.method == 'POST':
-        pass
+        return TeamRequisitePost(request, *args, **kwargs)
     if request.method == 'PUT':
-        pass
+        return TeamRequisitePut(request, *args, **kwargs)
     if request.method == 'DELETE':
-        pass
+        return TeamRequisiteDelete(request, *args, **kwargs)
 
 
 @api_view(['GET', 'POST', 'PUT', 'DELETE'])
 def TeamEmployeeView(request, *args, **kwargs):
     if request.method == 'GET':
-        pass
+        return TeamEmployeeGet(request, *args, **kwargs)
     if request.method == 'POST':
-        pass
+        return TeamEmployeePost(request, *args, **kwargs)
     if request.method == 'PUT':
-        pass
+        return TeamEmployeePut(request, *args, **kwargs)
     if request.method == 'DELETE':
-        pass
+        return TeamEmployeeDelete(request, *args, **kwargs)
 
 
 # ####### Employee Domain ####### #
@@ -115,34 +89,34 @@ def TeamEmployeeView(request, *args, **kwargs):
 @api_view(['GET', 'POST', 'PUT', 'DELETE'])
 def EmployeeView(request, *args, **kwargs):
     if request.method == 'GET':
-        pass
+        return EmployeeGet(request, *args, **kwargs)
     if request.method == 'POST':
-        pass
+        return EmployeePost(request, *args, **kwargs)
     if request.method == 'PUT':
-        pass
+        return EmployeePut(request, *args, **kwargs)
     if request.method == 'DELETE':
-        pass
+        return EmployeeDelete(request, *args, **kwargs)
 
 
 @api_view(['GET', 'POST', 'PUT', 'DELETE'])
 def EmployeeSuperiorView(request, *args, **kwargs):
     if request.method == 'GET':
-        pass
+        return EmployeeSuperiorGet(request, *args, **kwargs)
     if request.method == 'POST':
-        pass
+        return EmployeeSuperiorPost(request, *args, **kwargs)
     if request.method == 'PUT':
-        pass
+        return EmployeeSuperiorPut(request, *args, **kwargs)
     if request.method == 'DELETE':
-        pass
+        return EmployeeSuperiorDelete(request, *args, **kwargs)
 
 
 @api_view(['GET', 'POST', 'PUT', 'DELETE'])
 def EmployeeRoleView(request, *args, **kwargs):
     if request.method == 'GET':
-        pass
+        return EmployeeRoleGet(request, *args, **kwargs)
     if request.method == 'POST':
-        pass
+        return EmployeeRolePost(request, *args, **kwargs)
     if request.method == 'PUT':
-        pass
+        return EmployeeRolePut(request, *args, **kwargs)
     if request.method == 'DELETE':
-        pass
+        return EmployeeRoleDelete(request, *args, **kwargs)
