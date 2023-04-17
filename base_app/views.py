@@ -1,10 +1,5 @@
-from django.http import HttpResponse, JsonResponse
 from rest_framework import authentication, permissions, viewsets
-from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from rest_framework.parsers import JSONParser
-from .serializers import *
-from .constants import * # id's come from heres
 from .bl_domains.company_domain import *
 from .bl_domains.employee_domain import *
 from .bl_domains.role_domain import *
