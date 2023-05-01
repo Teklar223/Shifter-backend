@@ -1,6 +1,6 @@
 from django.db import models
 
-'''Assuming auto-id by the ORM '''
+''' auto-id by the ORM '''
 class Company(models.Model):
     # id
     name             =   models.CharField(max_length=200, null=True, blank=True)
