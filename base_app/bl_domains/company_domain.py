@@ -44,7 +44,6 @@ def CompanyPut(request, *args, **kwargs) -> JsonResponse:
 
 def CompanyDelete(request, *args, **kwargs) -> JsonResponse:
     if company_id in kwargs:
-        # data = JSONParser().parse(request)
         id = kwargs.get(company_id)
         company = Company.objects.filter(id = id)
         company.delete()
