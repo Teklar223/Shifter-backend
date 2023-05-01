@@ -116,7 +116,6 @@ def TeamEmployeeGet(request, *args, **kwargs) -> JsonResponse:
         serializer = TeamEmployeeSerializer(teamEmp, many=True)
         return JsonResponse(serializer.data, safe=False)
     
-
 def TeamEmployeePost(request, *args, **kwargs) -> JsonResponse:
     # TODO: can an employee be in several teams? (this might change the PUT/DELETE logic too!)
     data = JSONParser().parse(request)
