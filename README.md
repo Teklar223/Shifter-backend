@@ -20,6 +20,7 @@
 
 #### 3. ``` pip install -r ./requirements.txt ```
 
+#### *. ``` pip freeze > requirements.txt ``` when installing/upgrading libraries
 
 ### Django Links
 * https://stackoverflow.com/questions/55805865/is-django-a-mvc-or-mvt-framework

@@ -1,4 +1,4 @@
-
+mongo_uri = "MONGO_URI"
 company_id = "company_id"
 role_id = "role_id"
 team_id = "team_id"

@@ -3,8 +3,6 @@ from rest_framework import routers
 from .constants import * # all id's come from here
 from . import views
 
-# TODO: is passing auto-id needed? (for example role_requisite_id)
-
 company_patterns = [
     path(f'api/', views.CompanyView),
     path(f'api/<slug:{company_id}>/', views.CompanyView),

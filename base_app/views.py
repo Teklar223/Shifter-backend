@@ -4,6 +4,10 @@ from .bl_domains.company_domain import *
 from .bl_domains.employee_domain import *
 from .bl_domains.role_domain import *
 from .bl_domains.team_domain import *
+from .constants import mongo_uri
+from os import environ
+
+# TODO: add a view for Shifts!
 
 # ####### Company Domain ###### #
 @api_view(['GET', 'POST', 'PUT', 'DELETE'])
