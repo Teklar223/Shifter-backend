@@ -4,6 +4,8 @@ from .bl_domains.company_domain import *
 from .bl_domains.employee_domain import *
 from .bl_domains.role_domain import *
 from .bl_domains.team_domain import *
+from .bl_domains.task_domain import *
+from .bl_domains.shifts_domain import *
 from .constants import mongo_uri
 from os import environ
 
@@ -119,3 +121,52 @@ def EmployeeRoleView(request, *args, **kwargs):
         return EmployeeRolePut(request, *args, **kwargs)
     if request.method == 'DELETE':
         return EmployeeRoleDelete(request, *args, **kwargs)
+    
+
+# ######## Shifts Domain ######## #
+
+@api_view(['GET', 'POST', 'PUT', 'DELETE'])
+def ShiftsView(request, *args, **kwargs):
+    if request.method == 'GET':
+        return ShiftsGet(request, *args, **kwargs)
+    if request.method == 'POST':
+        return ShiftsPost(request, *args, **kwargs)
+    if request.method == 'PUT':
+        return ShiftsPut(request, *args, **kwargs)
+    if request.method == 'DELETE':
+        return ShiftsDelete(request, *args, **kwargs)
+    
+@api_view(['GET', 'POST', 'PUT', 'DELETE'])
+def WeeklyPrefView(request, *args, **kwargs):
+    if request.method == 'GET':
+        return WeeklyPrefGet(request, *args, **kwargs)
+    if request.method == 'POST':
+        return WeeklyPrefPost(request, *args, **kwargs)
+    if request.method == 'PUT':
+        return WeeklyPrefPut(request, *args, **kwargs)
+    if request.method == 'DELETE':
+        return WeeklyPrefDelete(request, *args, **kwargs)
+    
+@api_view(['GET', 'POST', 'PUT', 'DELETE'])
+def AssignmentsView(request, *args, **kwargs):
+    if request.method == 'GET':
+        return AssignmentsGet(request, *args, **kwargs)
+    if request.method == 'POST':
+        return AssignmentsPost(request, *args, **kwargs)
+    if request.method == 'PUT':
+        return AssignmentsPut(request, *args, **kwargs)
+    if request.method == 'DELETE':
+        return AssignmentsDelete(request, *args, **kwargs)
+
+# ######### Task Domain ######### #
+
+@api_view(['GET', 'POST', 'PUT', 'DELETE'])
+def TaskView(request, *args, **kwargs):
+    if request.method == 'GET':
+        return TaskGet(request, *args, **kwargs)
+    if request.method == 'POST':
+        return TaskPost(request, *args, **kwargs)
+    if request.method == 'PUT':
+        return TaskPut(request, *args, **kwargs)
+    if request.method == 'DELETE':
+        return TaskDelete(request, *args, **kwargs)
