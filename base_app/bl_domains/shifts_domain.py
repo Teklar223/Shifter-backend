@@ -11,8 +11,10 @@ from ..constants import team_id, company_id
 def ShiftsGet(request, *args, **kwargs) -> JsonResponse:
     if team_id in kwargs:
         handler: Shifts_Handler = Shifts_Handler()
-        shifts = handler.get_recent_shifts_by_team_id(team_id = team_id)
-        return JsonResponse(shifts.data, safe=False)
+        #shifts = handler.get_recent_shifts_by_team_id(team_id = team_id)
+        schedule: Schedule = handler.get_schedule_by_shift_id('643db236077a1bb573e4339a')
+        # print(schedule)
+        return JsonResponse(schedule.get_dict_format(), safe=False)
     else:
         return JsonResponse("No team_id for ShiftsGet :(", safe=False)
 
