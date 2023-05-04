@@ -29,11 +29,17 @@ employee_patterns = [
     path(f'api/<slug:{company_id}>/employee/<slug:{employee_id}>/', views.EmployeeView),
     path(f'api/<slug:{company_id}>/employeesup/', views.EmployeeSuperiorView),
     path(f'api/<slug:{company_id}>/employeesup/<slug:{employee_id}>/', views.EmployeeSuperiorView),
-    # *****************************************TODO: ^ pass superior_id in request body?
     path(f'api/<slug:{company_id}>/employeerole/', views.EmployeeRoleView),
     path(f'api/<slug:{company_id}>/employeerole/<slug:{employee_id}>/', views.EmployeeRoleView),
 ]
 
+task_patterns =[] # TODO
+
+shift_patterns = [
+    path(f'api/<slug:{company_id}>/shifts/', views.ShiftsView),
+    path(f'api/<slug:{company_id}>/shifts/<slug:{team_id}>/', views.ShiftsView),
+]
+
 urlpatterns = []
 
-urlpatterns += company_patterns + role_patterns + team_patterns + employee_patterns
+urlpatterns += company_patterns + role_patterns + team_patterns + employee_patterns + shift_patterns + task_patterns

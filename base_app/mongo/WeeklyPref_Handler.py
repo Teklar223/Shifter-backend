@@ -9,7 +9,7 @@ class WeeklyPrefHandler(CollectionHandler):
     def __init__(self):
         CollectionHandler.__init__(self, "WeeklyPreferences")
 
-    def derive_preferences_from_schedule(self, employee_id, schedule: Schedule):
+    def derive_preferences_from_schedule(self, employee_id, schedule: Schedule, default_pref = False):
         # TOOD: add
         team_id = schedule.get_team_id()
         shift_id = schedule.get_shift_id()
@@ -25,7 +25,7 @@ class WeeklyPrefHandler(CollectionHandler):
                 start_hour = available_shift["StartHour"]
                 end_hour = available_shift["EndHour"]
                 shift_name = available_shift["ShiftName"]
-                answer = False  # TODO create new function where this field is true and check if it is used in other places
+                answer = default_pref
                 shift_types.append(
                     {"StartHour": start_hour, "EndHour": end_hour, "ShiftName": shift_name, "Answer": answer})
                 constraints = "Not relevant for now"

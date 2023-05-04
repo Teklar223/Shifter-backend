@@ -18,6 +18,7 @@ class Connector:
         if Connector.__instance != None:
             raise Exception("This class is a singleton!")
         else:
+            self.URI = environ.get(mongo_uri)
             self.__client = MongoClient(self.URI)
             self.__db = self.__client.ShifterMongoDB
             self.__status = True
