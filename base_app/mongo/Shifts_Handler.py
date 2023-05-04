@@ -3,28 +3,29 @@ from bson import ObjectId
 
 from .Models.Schedule import Shift,Schedule
 from .Collection_Handler import CollectionHandler
+from .constants import *
 
 
 class Shifts_Handler(CollectionHandler):
     def __init__(self):
-        CollectionHandler.__init__(self, "Shifts")
+        CollectionHandler.__init__(self, Shifts_Col)
 
     """
     Utilities
     """
 
     def get_schedule_from_doc(self, doc):
-        shift_id = doc["ShiftID"]
-        team_id = doc["TeamID"]
-        company_id = doc["CompanyID"]
-        start_date = doc["StartDate"]
-        end_date = doc["EndDate"]
+        shift_id = doc[Shift_id]
+        team_id = doc[Team_id]
+        company_id = doc[Company_id]
+        start_date = doc[Start_date]
+        end_date = doc[End_date]
         sc = Schedule(company_id=company_id, team_id=team_id, startdate=start_date, enddate=end_date, shift_id=shift_id)
-        for data in doc["DailyShifts"]:
-            date = data["Date"]
-            start_hour = data["StartHour"]
-            end_hour = data["EndHour"]
-            possible_shifts = data["PossibleShifts"]
+        for data in doc[Daily_shifts]:
+            date = data[Date]
+            start_hour = data[Start_hour]
+            end_hour = data[End_hour]
+            possible_shifts = data[Possible_shifts]
             daily = Shift(date=date, starthour=start_hour, endhour=end_hour, possible_shifts=possible_shifts)
             sc.add_daily_shift(daily)
         return sc
@@ -39,7 +40,7 @@ class Shifts_Handler(CollectionHandler):
         doc = self.collection.find_one_and_update(
             {"_id": ObjectId(shift_id)},
             {"$set":
-                 {"ShiftID": shift_id}
+                 {f"{Shift_id}": shift_id}
              }, upsert=True
         )
 
@@ -55,16 +56,16 @@ class Shifts_Handler(CollectionHandler):
         pipeline = [
             {
                 "$match": {
-                    "TeamID": team_id
+                    f"{Team_id}": team_id
                 }
             },
             {
                 "$sort": {
-                    "StartDate": pymongo.DESCENDING
+                    f"{Start_date}": pymongo.DESCENDING
                 }
             },
             {
-                "$limit": 10
+                "$limit": 10 # TODO: define pagination (static 10 is OK for now)
             }
         ]
         docs = self.collection.aggregate(pipeline=pipeline)
@@ -77,7 +78,7 @@ class Shifts_Handler(CollectionHandler):
         returns a Schedule object
         '''
         sc = None
-        query = {"ShiftID": shift_id}
+        query = {f"{Shift_id}": shift_id}
         docs = self.collection.find(query, {})
         for doc in docs:
             sc = self.get_schedule_from_doc(doc)
@@ -101,15 +102,14 @@ class Shifts_Handler(CollectionHandler):
         self.collection.find_one_and_update(
             {"_id": ObjectId(shift_id)},
             {"$set":
-                 {"ShiftID": shift_id, "CompanyID": company_id, "TeamID": team_id, "StartDate": start, "EndDate": end,
-                  "DailyShifts": shifts_register}
+                 {f"{Shift_id}": shift_id, f"{Company_id}": company_id, f"{Team_id}": team_id, f"{Start_date}": start, f"{End_date}": end,
+                  f"{Daily_shifts}": shifts_register}
              }, upsert=True
         )
 
     """
-    Crud - Delete
+    Crud - Delete # TODO
     """
-
 
 # s = Shift(1, 1, 1, [{"ShiftName": "Evening", "StartHour": 1900, "EndHour": 2330, "NeededRoles":
 #     [

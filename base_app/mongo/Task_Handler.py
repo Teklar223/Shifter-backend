@@ -15,8 +15,8 @@ class TasksHandler(CollectionHandler):
 
     def add_new_task(self, task):
         data = dict()
-        data[task_id] = "Temp"
-        data[company_id] = task.get_company_id()
+        data[Task_id] = "Temp"
+        data[Company_id] = task.get_company_id()
         data["TeamID"] = task.get_team_id()
         data["ParentalTaskID"] = "None"
         data["TaskInfo"] = task.get_task_info()
