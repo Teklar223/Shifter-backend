@@ -98,6 +98,11 @@ class AssignedWeek:
 
     def __str__(self):
         return str(self.get_dict_format())
+    
+    def add_event(self, date: int, event: AssignedEvent):
+        for day in self.__dailies:
+            if day.get_date() == date:
+                day += event
 
     # Static methods
     @classmethod

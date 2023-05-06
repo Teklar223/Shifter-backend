@@ -1,8 +1,8 @@
 from bson import ObjectId
-from .Models.WeeklyPref import DailyPref, WeeklyPref
-from .Models.Schedule import Schedule
-from .Models.Shift import Shift
-from .Collection_Handler import CollectionHandler
+from base_app.mongo.Models.WeeklyPref import DailyPref, WeeklyPref
+from base_app.mongo.Models.Schedule import Schedule
+from base_app.mongo.Models.Shift import Shift
+from base_app.mongo.Collection_Handler import CollectionHandler
 
 
 class WeeklyPrefHandler(CollectionHandler):
@@ -55,7 +55,7 @@ class WeeklyPrefHandler(CollectionHandler):
         team_id = doc["TeamID"]
         company_id = doc["CompanyID"]
         shift_id = doc["ShiftID"]
-        wp = WeeklyPref(employee_id=employee_id, team_id=team_id, company_id=company_id, shift_id=shift_id)
+        wp = WeeklyPref(employee_id=employee_id, team_id=team_id, company_id=company_id, shift_id=shift_id, dailies=[])
         dailies = doc["Dailies"]
         for daily in dailies:
             date = daily["Date"]
@@ -68,6 +68,7 @@ class WeeklyPrefHandler(CollectionHandler):
                 data["StartHour"] = shift["StartHour"]
                 data["EndHour"] = shift["EndHour"]
                 data["ShiftName"] = shift["ShiftName"]
+                data["Answer"] = shift["Answer"]
                 shift_for_obj.append(data)
             daily_pref = DailyPref(date=date, shift_types=shift_for_obj)
             wp.add_daily_preference(dailypref=daily_pref)

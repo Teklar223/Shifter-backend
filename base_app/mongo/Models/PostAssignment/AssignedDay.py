@@ -70,7 +70,7 @@ class AssignedDay:
 
     # Static Metods
     @classmethod
-    def dict_to_day_object(dict_obj: dict):
+    def dict_to_day_object(self, dict_obj: dict):
         start_hour = dict_obj["StartHour"]
         end_hour = dict_obj["EndHour"]
         date = dict_obj["Date"]
@@ -80,9 +80,9 @@ class AssignedDay:
             day += event
         return day
 
-e1 = AssignedEvent(900, 1200, 1)
-e2 = AssignedEvent(1200, 1700, 2)
-d = AssignedDay(20230430, 900, 1700)
-d = d + e1
-d += e2
-print(d)
+# e1 = AssignedEvent(900, 1200, 1)
+# e2 = AssignedEvent(1200, 1700, 2)
+# d = AssignedDay(20230430, 900, 1700)
+# d = d + e1
+# d += e2
+# print(d)

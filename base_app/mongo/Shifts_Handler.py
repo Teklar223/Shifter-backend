@@ -128,3 +128,4 @@ class Shifts_Handler(CollectionHandler):
 # sh.update_shift(sc)
 # sh.add_new_shift(sc)
 # print(sh.get_recent_shifts_by_team_id(7)[0].get_dict_format())
+

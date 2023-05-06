@@ -1,6 +1,6 @@
 from pymongo import MongoClient
 from os import environ
-from ..constants import mongo_uri
+from .constants import mongo_uri
 
 class Connector:
     __instance = None
@@ -18,8 +18,7 @@ class Connector:
         if Connector.__instance != None:
             raise Exception("This class is a singleton!")
         else:
-            self.URI = environ.get(mongo_uri)
-            self.__client = MongoClient(self.URI)
+            self.__client = MongoClient(environ.get(mongo_uri)[1:-1])
             self.__db = self.__client.ShifterMongoDB
             self.__status = True
             Connector.__instance = self
