@@ -6,15 +6,17 @@ from base_app.mongo.SchedulingAlgorithm.Utils import get_maximal_workers_dict, g
 from base_app.mongo.Models.PostAssignment.AssignedWeek import AssignedDay, AssignedEvent, AssignedWeek
 import json
 from base_app.mongo.Models import Schedule, Shift
-
+from base_app.mongo.SchedulingAlgorithm.Strategies.Stratrgy import Strategy
+from .Strategies.HourStrategies.MaxHoursStrategy import Max_Hour_Daily_Strategy
+from .Strategies.HourStrategies.MaxHoursSchedule import Max_Hour_Schedule_Strategy
+from .Strategies.StrategyUtils import get_strategies, divide_strategies_by_role
 
 
 # TODO: update maximum hours per day
 # Assuming that I get a dictionary from employee_id to role_id, seperate by roles and run the algorithm seperately
 
 
-
-def schedule(shift_id, employee_roles):
+def schedule(shift_id, employee_roles, strategies):
 
     """
     get the needed data for the algorithm using the preprocessing function
@@ -40,8 +42,16 @@ def schedule(shift_id, employee_roles):
     add the events to the days
     """
 
+    roles_strategies, global_strategies = divide_strategies_by_role(strategies_dict=strategies,
+                                                                    roles=roles,
+                                                                    employees_roles=employee_roles)
     for role in roles:
-        output = run(schedule_template=schedule_template.get(role), preferences_template_list=preferences_template.get(role))
+        role_strategies = roles_strategies.get(role)
+        if role_strategies is None:
+            role_strategies = dict()
+        output = run(schedule_template=schedule_template.get(role),
+                      preferences_template_list=preferences_template.get(role),
+                      role_strategies=role_strategies, global_strategies=global_strategies)
         for date, events in output.items():
             for event in events:
                 week.add_event(date, event)
@@ -49,7 +59,7 @@ def schedule(shift_id, employee_roles):
     return week
 
 
-def run(schedule_template, preferences_template_list):
+def run(schedule_template, preferences_template_list, role_strategies, global_strategies):
     employees = [x.get("EmployeeID") for x in preferences_template_list] # list of employee ids
     dates = [x for x in schedule_template.keys()]
     shifts = {}
@@ -83,13 +93,23 @@ def run(schedule_template, preferences_template_list):
                 continue
             maximal = maximal_dict.get(date).get(shift_str)
             model.Add(sum(shifts[Tuple_Key(employee_id=e_id, date=date, shift=shift_copy)] for e_id in employees_for_shift) <= maximal)
-    
-    # """
-    # prepare to finalize:
-    # """
 
-    # for x in shifts:
-    #     print(x)
+    """
+    Create a list of strategies and execute them
+    """
+
+    role_strategies_list = get_strategies(strategies_dict=role_strategies, shift_keys=keys)
+    global_strategies_list = get_strategies(strategies_dict=global_strategies, shift_keys=keys)
+    strategies_list = role_strategies_list + global_strategies_list
+    for strategy in strategies_list:
+        model = strategy.execute(model=model, shifts=shifts)
+    
+
+    # mhstartegy = Max_Hour_Daily_Strategy(keys=keys, input_keys=input_keys)
+    # model = mhstartegy.execute(model=model, inputs=input_keys, shifts=shifts)
+
+    # mhstartegy2 = Max_Hour_Schedule_Strategy(keys=keys, input_keys=input_keys2)
+    # model = mhstartegy2.execute(model=model, inputs=input_keys2, shifts=shifts)
 
 
     model.Maximize(sum(shifts[key] for key in keys))
