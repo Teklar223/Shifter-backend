@@ -14,7 +14,6 @@ from base_app.mongo.Models import Schedule, Shift
 
 
 
-
 def schedule(shift_id, employee_roles):
 
     """
