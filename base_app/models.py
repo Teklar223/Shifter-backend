@@ -1,4 +1,41 @@
 from django.db import models
+from django.contrib.auth.models import AbstractUser, BaseUserManager
+
+''' USER '''
+
+class CustomUserManager(BaseUserManager):
+
+    def create_user(self, email, password, company_id = None , employee_id = None, team_id = None , role_name = None):
+        if not email:
+            raise ValueError('Users must have an email address')
+
+        user = self.model(email = self.normalize_email(email))
+
+        user.set_password(password)
+        user.save(using = self._db)
+        return user
+        
+    def create_superuser(self, email, password=None):
+        user = self.create_user(email = email,  password = password )
+        user.is_admin = True
+        user.is_superuser = True
+        user.is_staff = True
+        user.save(using=self._db)
+        return user
+
+class CustomUser(AbstractUser):
+    username = None # this allows email to act as a UID
+    email = models.EmailField(unique=True)
+    # first_name (inherited)
+    # last_name  (inherited)
+    role_name = None
+    # TODO: Add image API   
+
+    objects = CustomUserManager()
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = [] # important
+
 
 ''' auto-id by the ORM '''
 class Company(models.Model):

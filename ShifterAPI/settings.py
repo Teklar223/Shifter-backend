@@ -18,7 +18,8 @@ class Base(Configuration):
     # Build paths inside the project like this: BASE_DIR / 'subdir'.
     BASE_DIR = Path(__file__).resolve().parent.parent
 
-
+    AUTH_USER_MODEL = "base_app.CustomUser"
+    DEFAULT_AUTO_FIELD='django.db.models.AutoField' 
     ALLOWED_HOSTS = ['127.0.0.1:8000']
 
     # TODO - https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
@@ -151,7 +152,7 @@ class Prod(Base):
             'ENGINE': 'django.db.backends.postgresql',
             'NAME': 'railway',
             'USER': 'postgres',
-            'PASSWORD': 'OEHKq4LReCNNjg2tQx1f',
+            'PASSWORD': 'OEHKq4LReCNNjg2tQx1f', # TODO: hide in ENV...
             'HOST': 'containers-us-west-153.railway.app',
             'PORT': '7077',
         }

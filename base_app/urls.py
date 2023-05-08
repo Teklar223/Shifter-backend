@@ -38,6 +38,8 @@ task_patterns =[] # TODO
 shift_patterns = [
     path(f'api/<slug:{company_id}>/shifts/', views.ShiftsView),
     path(f'api/<slug:{company_id}>/shifts/<slug:{team_id}>/', views.ShiftsView),
+    path(f'api/<slug:{company_id}>/weeklypref/', views.WeeklyPrefView),
+    path(f'api/<slug:{company_id}>/weeklypref/<slug:{employee_id}>/', views.WeeklyPrefView),
 ]
 
 urlpatterns = []
