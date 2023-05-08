@@ -15,7 +15,7 @@ class CustomUserManager(BaseUserManager):
         user.save(using = self._db)
         return user
         
-    def create_superuser(self, email, password):
+    def create_superuser(self, email, password=None):
         user = self.create_user(email = email,  password = password )
         user.is_admin = True
         user.is_superuser = True
@@ -28,14 +28,12 @@ class CustomUser(AbstractUser):
     email = models.EmailField(unique=True)
     # first_name (inherited)
     # last_name  (inherited)
-    team_id = None
-    company_id = None
     role_name = None
     # TODO: Add image API   
 
     objects = CustomUserManager()
 
-    USERNAME_FIELD = 'email' # TODO: why cant i add this in admin view?
+    USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = [] # important
 
 
