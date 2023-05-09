@@ -18,6 +18,7 @@ class Base(Configuration):
     # Build paths inside the project like this: BASE_DIR / 'subdir'.
     BASE_DIR = Path(__file__).resolve().parent.parent
 
+    LOGIN_URL  = '/admin/login/'
     AUTH_USER_MODEL = "base_app.CustomUser"
     DEFAULT_AUTO_FIELD='django.db.models.AutoField' 
     ALLOWED_HOSTS = ['127.0.0.1:8000']
@@ -32,8 +33,9 @@ class Base(Configuration):
         'django.contrib.messages',      #
         'django.contrib.staticfiles',   #
         'corsheaders',
+        'oauth2_provider',
         'rest_framework',
-        'base_app'
+        'base_app',
     ]
 
     MIDDLEWARE = [

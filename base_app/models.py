@@ -15,7 +15,7 @@ class CustomUserManager(BaseUserManager):
         user.save(using = self._db)
         return user
         
-    def create_superuser(self, email, password=None):
+    def create_superuser(self, email, password):
         user = self.create_user(email = email,  password = password )
         user.is_admin = True
         user.is_superuser = True
@@ -28,6 +28,8 @@ class CustomUser(AbstractUser):
     email = models.EmailField(unique=True)
     # first_name (inherited)
     # last_name  (inherited)
+    team_id = None
+    company_id = None
     role_name = None
     # TODO: Add image API   
 
