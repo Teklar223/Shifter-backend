@@ -35,7 +35,7 @@ class CustomUser(AbstractUser):
 
     objects = CustomUserManager()
 
-    USERNAME_FIELD = 'email'
+    USERNAME_FIELD = 'email' # TODO: why cant i add this in admin view?
     REQUIRED_FIELDS = [] # important
 
 
@@ -77,7 +77,7 @@ class TeamEmployee(models.Model):
     end_date    =   models.DateField(blank=True, null=True)
 
 class Employee(models.Model):
-    # id
+    # TODO: replace Employee with CustomUser
     first_name  =   models.CharField(max_length=200, null=True, blank=True)
     last_name   =   models.CharField(max_length=200, null=True, blank=True)
     birthday    =   models.DateField(auto_now_add=True, null=True, blank=True)

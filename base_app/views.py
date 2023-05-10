@@ -6,12 +6,12 @@ from .bl_domains.role_domain import *
 from .bl_domains.team_domain import *
 from .bl_domains.task_domain import *
 from .bl_domains.shifts_domain import *
-from .constants import mongo_uri
-from os import environ
-
-# TODO: add a view for Shifts!
+from oauth2_provider.decorators import protected_resource
+from .constants import user_scope,manager_scope,employer_scope,admin_scope
 
 # ####### Company Domain ###### #
+
+@protected_resource(scopes = [admin_scope])
 @api_view(['GET', 'POST', 'PUT', 'DELETE'])
 def CompanyView(request, *args, **kwargs):
     if request.method == 'GET':

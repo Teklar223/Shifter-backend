@@ -52,6 +52,21 @@ class Base(Configuration):
 
     ROOT_URLCONF = 'ShifterAPI.urls'
 
+    OAUTH2_PROVIDER = {
+        'SCOPES': {
+            'user': 'A regular Shifter user',
+            'manager': 'A manager employee',
+            'employer': 'A bussiness owner',
+            'admin': 'Shifter admin',
+        }
+    }
+
+    REST_FRAMEWORK = {
+        'DEFAULT_AUTHENTICATION_CLASSES': (
+            'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
+        )
+    }
+
     TEMPLATES = [
         {
             'BACKEND': 'django.template.backends.django.DjangoTemplates',
