@@ -1,4 +1,4 @@
-from rest_framework import authentication, permissions, viewsets
+from rest_framework import authentication, permissions, viewsets # TODO - Use this for auth!
 from rest_framework.decorators import api_view
 from .bl_domains.company_domain import *
 from .bl_domains.employee_domain import *
@@ -6,12 +6,10 @@ from .bl_domains.role_domain import *
 from .bl_domains.team_domain import *
 from .bl_domains.task_domain import *
 from .bl_domains.shifts_domain import *
-from oauth2_provider.decorators import protected_resource
 from .constants import user_scope,manager_scope,employer_scope,admin_scope
 
 # ####### Company Domain ###### #
 
-@protected_resource(scopes = [admin_scope])
 @api_view(['GET', 'POST', 'PUT', 'DELETE'])
 def CompanyView(request, *args, **kwargs):
     if request.method == 'GET':

@@ -19,7 +19,6 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('base_app.urls')),
-    path('o/', include('oauth2_provider.urls', namespace = 'oauth2_provider')),
 ]
 
 # base_url = localhost:5800 | www.heroku-shifterapp.com
