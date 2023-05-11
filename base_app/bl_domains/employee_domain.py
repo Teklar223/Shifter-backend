@@ -1,7 +1,7 @@
 from django.http import JsonResponse
 from rest_framework.parsers import JSONParser
 from ..constants import employee_id, superior_id, company_id, error_id, role_id
-from ..models import Employee,EmployeeSuperior,EmployeeRole
+from ..models import EmployeeSuperior,EmployeeRole, CustomUser as Employee
 from ..serializers import EmployeeSerializer, EmployeeSuperiorSerializer, EmployeeRoleSerializer
 
 ''' Employee  '''

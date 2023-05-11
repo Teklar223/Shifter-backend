@@ -5,7 +5,7 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager
 
 class CustomUserManager(BaseUserManager):
 
-    def create_user(self, email, password, company_id = None , employee_id = None, team_id = None , role_name = None):
+    def create_user(self, email, password, company_id = None , employee_id = None, team_id = None , role_id = None):
         if not email:
             raise ValueError('Users must have an email address')
 
@@ -24,12 +24,21 @@ class CustomUserManager(BaseUserManager):
         return user
 
 class CustomUser(AbstractUser):
-    username = None # this allows email to act as a UID
-    email = models.EmailField(unique=True)
+    '''
+        Equivalent/Aliased as "Employee"
+    '''
+    username   = None # this allows email to act as a UID
+    email      = models.EmailField(unique=True)
+    company_id = models.ForeignKey('Company', on_delete=models.SET_NULL, null=True, blank=True)
+    team_id    = models.ForeignKey('Team', on_delete=models.SET_NULL, null=True, blank=True)
+    role_id    = models.ForeignKey('Role', on_delete=models.SET_NULL, null=True, blank=True) 
     # first_name (inherited)
     # last_name  (inherited)
-    role_name = None
+    # is_active  (inherited)
     # TODO: Add image API   
+
+    
+    ''' Possible extension: private/marketable info '''
 
     objects = CustomUserManager()
 
@@ -70,24 +79,18 @@ class TeamRoleRequisites(models.Model):
 class TeamEmployee(models.Model):
     # id
     team_id     =   models.ForeignKey('Team', on_delete=models.CASCADE, null=True, blank=True)
-    employee_id =   models.ForeignKey('Employee', on_delete=models.CASCADE, null=True, blank=True)
+    employee_id =   models.ForeignKey('CustomUser', on_delete=models.CASCADE, null=True, blank=True)
     start_date  =   models.DateField(blank=False, null=False)
     end_date    =   models.DateField(blank=True, null=True)
 
-class Employee(models.Model):
-    # TODO: replace Employee with CustomUser
-    first_name  =   models.CharField(max_length=200, null=True, blank=True)
-    last_name   =   models.CharField(max_length=200, null=True, blank=True)
-    birthday    =   models.DateField(auto_now_add=True, null=True, blank=True)
-
 class EmployeeSuperior(models.Model):
     # id
-    employee_id = models.OneToOneField('Employee', on_delete=models.CASCADE, null=True, blank=True)
-    superior_id = models.ForeignKey('Employee', on_delete=models.CASCADE, related_name='superior', null=True, blank=True)
+    employee_id = models.OneToOneField('CustomUser', on_delete=models.CASCADE, null=True, blank=True)
+    superior_id = models.ForeignKey('CustomUser', on_delete=models.SET_NULL, related_name='superior', null=True, blank=True)
 
 class EmployeeRole(models.Model):
     # id
-    employee_id = models.ForeignKey('Employee', on_delete=models.CASCADE, null=True, blank=True)
-    role_id     = models.ForeignKey('Role', on_delete=models.CASCADE, null=True, blank=True)
+    employee_id = models.ForeignKey('CustomUser', on_delete=models.CASCADE, null=True, blank=True)
+    role_id     = models.ForeignKey('Role', on_delete=models.SET_NULL, null=True, blank=True) 
 
         
