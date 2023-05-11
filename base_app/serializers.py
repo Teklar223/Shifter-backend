@@ -3,8 +3,10 @@ from .models import *
 
 ''' User '''
 
-
 class EmployeeSerializer(serializers.ModelSerializer):
+    '''
+        Alias for CustomUserSerializer
+    '''
     class Meta:
         model = CustomUser
         fields = "__all__" # TODO: has to hide password!

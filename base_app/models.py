@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
+from .constants import user_scope
 
 ''' USER '''
 
@@ -35,10 +36,9 @@ class CustomUser(AbstractUser):
     # first_name (inherited)
     # last_name  (inherited)
     # is_active  (inherited)
+    permission_scope = models.CharField(max_length=10, default=user_scope)
     # TODO: Add image API   
 
-    
-    ''' Possible extension: private/marketable info '''
 
     objects = CustomUserManager()
 

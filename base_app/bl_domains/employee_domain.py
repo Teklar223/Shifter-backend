@@ -8,6 +8,7 @@ from ..serializers import EmployeeSerializer, EmployeeSuperiorSerializer, Employ
 
 def EmployeeGet(request, *args, **kwargs) -> JsonResponse:
     '''
+    Employee = CustomerUser
     expects company_id and employee_id in kwargs, and superior_id in query
     '''
     if employee_id in kwargs:

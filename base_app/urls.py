@@ -1,7 +1,11 @@
-from django.urls import path, include
-from rest_framework import routers
+from django.urls import path
+from rest_framework.authtoken import views as auth_views
 from .constants import * # all id's come from here
 from . import views
+
+auth_patterns = [
+    path('api/token-auth/', auth_views.obtain_auth_token)
+]
 
 company_patterns = [
     path(f'api/', views.CompanyView),
@@ -42,6 +46,6 @@ shift_patterns = [
     path(f'api/<slug:{company_id}>/weeklypref/<slug:{employee_id}>/', views.WeeklyPrefView),
 ]
 
-urlpatterns = []
+urlpatterns = [] + auth_patterns
 
 urlpatterns += company_patterns + role_patterns + team_patterns + employee_patterns + shift_patterns + task_patterns

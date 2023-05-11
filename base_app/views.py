@@ -1,5 +1,6 @@
-from rest_framework import authentication, permissions, viewsets # TODO - Use this for auth!
-from rest_framework.decorators import api_view
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from .bl_domains.company_domain import *
 from .bl_domains.employee_domain import *
 from .bl_domains.role_domain import *
@@ -11,7 +12,11 @@ from .constants import user_scope,manager_scope,employer_scope,admin_scope
 # ####### Company Domain ###### #
 
 @api_view(['GET', 'POST', 'PUT', 'DELETE'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def CompanyView(request, *args, **kwargs):
+    # TODO: check Auth level and proceed accordingly
+
     if request.method == 'GET':
         return CompanyGet(request, *args, **kwargs)
     if request.method == 'POST':
