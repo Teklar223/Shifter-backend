@@ -105,12 +105,6 @@ def run(schedule_template, preferences_template_list, role_strategies, global_st
         model = strategy.execute(model=model, shifts=shifts)
     
 
-    # mhstartegy = Max_Hour_Daily_Strategy(keys=keys, input_keys=input_keys)
-    # model = mhstartegy.execute(model=model, inputs=input_keys, shifts=shifts)
-
-    # mhstartegy2 = Max_Hour_Schedule_Strategy(keys=keys, input_keys=input_keys2)
-    # model = mhstartegy2.execute(model=model, inputs=input_keys2, shifts=shifts)
-
 
     model.Maximize(sum(shifts[key] for key in keys))
 
