@@ -1,8 +1,8 @@
 from bson import ObjectId
-from .Models.WeeklyPref import DailyPref, WeeklyPref
-from .Models.Schedule import Schedule
-from .Models.Shift import Shift
-from .Collection_Handler import CollectionHandler
+from base_app.mongo.Models.WeeklyPref import DailyPref, WeeklyPref
+from base_app.mongo.Models.Schedule import Schedule
+from base_app.mongo.Models.Shift import Shift
+from base_app.mongo.Collection_Handler import CollectionHandler
 
 
 class WeeklyPrefHandler(CollectionHandler):
@@ -45,7 +45,21 @@ class WeeklyPrefHandler(CollectionHandler):
             {
                 "$set": {
                     "ShiftID": data["ShiftID"],
-                    "Dailies": data["Dailies"]
+                    "Dailies": data["Dailies"],
+                    "StartDate": data["StartDate"],
+                    "EndDate": data["EndDate"]
+                }
+            }
+        )
+    
+    def update_employee_next_weekly_pref(self, employee_id, wp: WeeklyPref):
+        data = wp.get_dict_format()
+        result = self.collection.update_many(
+            {
+                "EmployeeID": {"$eq": employee_id}},
+            {
+                "$set": {
+                    "Dailies": data["Dailies"],
                 }
             }
         )
@@ -55,7 +69,7 @@ class WeeklyPrefHandler(CollectionHandler):
         team_id = doc["TeamID"]
         company_id = doc["CompanyID"]
         shift_id = doc["ShiftID"]
-        wp = WeeklyPref(employee_id=employee_id, team_id=team_id, company_id=company_id, shift_id=shift_id)
+        wp = WeeklyPref(employee_id=employee_id, team_id=team_id, company_id=company_id, shift_id=shift_id, dailies=[])
         dailies = doc["Dailies"]
         for daily in dailies:
             date = daily["Date"]
@@ -68,6 +82,7 @@ class WeeklyPrefHandler(CollectionHandler):
                 data["StartHour"] = shift["StartHour"]
                 data["EndHour"] = shift["EndHour"]
                 data["ShiftName"] = shift["ShiftName"]
+                data["Answer"] = shift["Answer"]
                 shift_for_obj.append(data)
             daily_pref = DailyPref(date=date, shift_types=shift_for_obj)
             wp.add_daily_preference(dailypref=daily_pref)
@@ -76,6 +91,15 @@ class WeeklyPrefHandler(CollectionHandler):
     def get_team_preferences(self, team_id):
         wpl = []
         query = {"TeamID": team_id}
+        docs = self.collection.find(query, {})
+        for doc in docs:
+            wp = self.get_wp_from_doc(doc)
+            wpl.append(wp)
+        return wpl
+    
+    def get_employee_preferences(self, employee_id):
+        wpl = []
+        query = {"EmployeeID": employee_id}
         docs = self.collection.find(query, {})
         for doc in docs:
             wp = self.get_wp_from_doc(doc)

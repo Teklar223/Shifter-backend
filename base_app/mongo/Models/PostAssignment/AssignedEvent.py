@@ -1,3 +1,5 @@
+from base_app.mongo.constants import Employee_id
+
 class AssignedEvent:
     def __init__(self, start_hour, end_hour, employee_id):
         self.__start_hour = start_hour
@@ -25,7 +27,7 @@ class AssignedEvent:
         self.__employee_id = employee_id
 
     def get_dict_format(self):
-        return {"StartHour": self.__start_hour, "EndHour": self.__end_hour, "EmployeeID": self.__employee_id}
+        return {"StartHour": self.__start_hour, "EndHour": self.__end_hour, Employee_id: self.__employee_id}
 
     def __str__(self):
         return str(self.get_dict_format())
@@ -33,8 +35,8 @@ class AssignedEvent:
 
     # Static Functions
     @classmethod
-    def dict_to_event_obj(dict_obj: dict):
+    def dict_to_event_obj(self, dict_obj: dict):
         start_hour = dict_obj["StartHour"]
         end_hour = dict_obj["EndHour"]
-        employee_id = dict_obj["Employee_id"]
+        employee_id = dict_obj[Employee_id]
         return AssignedEvent(start_hour=start_hour, end_hour=end_hour, employee_id=employee_id)

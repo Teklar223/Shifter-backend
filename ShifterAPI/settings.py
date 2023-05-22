@@ -33,6 +33,7 @@ class Base(Configuration):
         'django.contrib.staticfiles',   #
         'corsheaders',
         'rest_framework',
+        'rest_framework.authtoken', # For Security improvment, use https://github.com/James1345/django-rest-knox instead
         'base_app',
     ]
 
@@ -116,6 +117,15 @@ class Base(Configuration):
 
     import django_heroku
     django_heroku.settings(locals())
+
+    REST_FRAMEWORK = {
+
+        'DEFAULT_AUTHENTICATION_CLASSES': [
+            'rest_framework.authentication.TokenAuthentication',
+            #'rest_framework.authentication.BasicAuthentication',
+            #'rest_framework.authentication.SessionAuthentication',
+        ]
+    }
 
 class Dev(Base):
     # SECURITY WARNING: keep the secret key used in production secret!
