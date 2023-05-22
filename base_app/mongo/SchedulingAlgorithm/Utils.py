@@ -1,9 +1,23 @@
-def get_maximal_workers(shift_template, date, starthour, endhour, role_id):
-    if shift_template.get(date) is not None:
-        for shift in shift_template[date]:
-            if shift["StartHour"] == starthour and shift["EndHour"] == endhour and shift["RoleID"] == role_id:
-                return shift["Workers"]
-    return None
+from copy import deepcopy
+
+def get_maximal_workers_dict(shift_template: dict):
+    output = dict()
+    for date, shifts in shift_template.items():
+        output[date] = dict()
+        for shift in shifts:
+            _, shift_str = get_shift_str(shift, "Workers")
+            max_workers = shift.get("Workers")
+            output.get(date)[shift_str] = max_workers
+    return output
 
 
-# TODO: create a function that change all answers to true
+def get_shift_str(shift, item):
+     shift_copy = deepcopy(shift)
+     shift_copy.pop(item)
+     return shift_copy, str(shift_copy)
+
+def transform(input: list):
+    numbers = range(len(input))
+    output = dict()
+    for i in input:
+        pass 

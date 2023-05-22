@@ -1,6 +1,6 @@
 from pymongo import MongoClient
 from os import environ
-from ..constants import mongo_uri
+from .constants import mongo_uri
 
 class Connector:
     __instance = None
