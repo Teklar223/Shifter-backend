@@ -12,7 +12,7 @@ def EmployeeGet(request, *args, **kwargs) -> JsonResponse:
     expects company_id and employee_id in kwargs, and superior_id in query
     '''
     if employee_id in kwargs:
-        employee = Employee.objects.get(id = kwargs.get(employee_id, error_id))
+        employee = Employee.objects.get(id = kwargs.get(employee_id))
         serializer = EmployeeSerializer(employee, many=False)
         return JsonResponse(serializer.data, safe=False)
     else:

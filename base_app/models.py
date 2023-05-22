@@ -32,7 +32,7 @@ class CustomUser(AbstractUser):
     email      = models.EmailField(unique=True)
     company_id = models.ForeignKey('Company', on_delete=models.SET_NULL, null=True, blank=True)
     team_id    = models.ForeignKey('Team', on_delete=models.SET_NULL, null=True, blank=True)
-    role_id    = models.ForeignKey('Role', on_delete=models.SET_NULL, null=True, blank=True) 
+    role_id    = models.ForeignKey('Role', on_delete=models.SET_NULL, null=True, blank=True)
     # first_name (inherited)
     # last_name  (inherited)
     # is_active  (inherited)
