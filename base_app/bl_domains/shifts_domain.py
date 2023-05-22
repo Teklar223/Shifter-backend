@@ -5,9 +5,10 @@ from ..mongo.WeeklyPref_Handler import WeeklyPrefHandler, DailyPref, WeeklyPref 
 # from ..mongo.AssignmentsHandler import AssignmentsHandler
 from ..mongo.constants import *
 from ..constants import team_id, company_id, employee_id
-from ..mongo.constants import Shift_id, Employee_id, Team_id, Company_id
+from ..mongo.constants import Shift_id, Employee_id, Team_id, Company_id, INPUT_SIGNATURE
 from ..mongo.Models.PostAssignment.AssignedWeek import AssignedWeek, AssignedEvent, AssignedDay
-from ..mongo import AssignmentsHandler
+from ..mongo.AssignmentsHandler import Assignment_Handler
+from ..mongo.SchedulingAlgorithm.Algorithm import schedule
 ''' Shifts  '''
 
 def ShiftsGet(request, *args, **kwargs) -> JsonResponse:
@@ -232,18 +233,68 @@ case 3: get assignment by team(recent assignments)
 """
 
 def AssignmentsGet(request, *args, **kwargs) -> JsonResponse:
-    # if Shift_id in kwargs:
-    #     handler : AssignmentsHandler = AssignmentsHandler()
-    #     assignment : AssignedWeek = handler
+    if Shift_id in kwargs:
+        handler : Assignment_Handler = Assignment_Handler()
+        assignment : AssignedWeek = handler.get_assignment_by_shift_id(kwargs.get(Shift_id))
+        return JsonResponse(data=assignment.get_dict_format(), safe=False)
         # TODO: merge with the algorithm branch to continue
-    pass
+    elif date in kwargs:
+        pass # TODO: implement the function first
+    elif team_id in kwargs:
+        t_id = kwargs.get(team_id)
+        handler : Assignment_Handler = Assignment_Handler()
+        if "count" in kwargs:
+            count = kwargs.get("count")
+            if isinstance(count, int) and count > 0:
+                data = handler.get_recent_assignments_by_team_id(team_id=t_id, count=count)
+            else:
+                data = handler.get_recent_assignments_by_team_id(team_id=t_id)
+            data_dict = [d.get_dict_format() for d in data]
+            return JsonResponse(data=data_dict, safe=False)
+        else:
+            data = handler.get_recent_assignments_by_team_id(team_id=t_id)
+            data_dict = [d.get_dict_format() for d in data]
+            return JsonResponse(data=data_dict, safe=False)
 
 
 def AssignmentsPost(request, *args, **kwargs) -> JsonResponse:
-    pass
+    data = JSONParser().parse(request)
+    handler : Assignment_Handler = Assignment_Handler()
+    assignment = AssignedWeek.dict_to_week_obj(data)
+    handler.add_new_assignment(assignment=assignment)
+    return JsonResponse(safe=False, status=201)
 
 def AssignmentsPut(request, *args, **kwargs) -> JsonResponse:
-    pass
+    data = JSONParser().parse(request)
+    handler : Assignment_Handler = Assignment_Handler()
+    assignment = AssignedWeek.dict_to_week_obj(data)
+    handler.update_assignment(assignment=assignment)
+    return JsonResponse(safe=False, status=201)
 
 def AssignmentsDelete(request, *args, **kwargs) -> JsonResponse:
     pass
+
+"""
+Needed inputs in kwargs: ShiftID
+Needed input in body: {"Strategy Inputs": {inputs dictionary of dictionaries}}
+"""
+
+def SchedulingAlgorithmRun(request, *args, **kwargs) -> JsonResponse:
+    if Shift_id in kwargs:
+        s_id = kwargs.get(Shift_id)
+        shift_handler : Shifts_Handler = Shifts_Handler()
+        schedule = shift_handler.get_schedule_by_shift_id(shift_id=s_id)
+        t_id = schedule.get_team_id()
+        team_data = None # TODO: after merge get the data of the team and save it in this variable
+        employees_roles = dict()
+        for entry in team_data:
+            employee_id = entry.email
+            role_id = entry.role_id
+            employees_roles[employee_id] = role_id
+        input_condition = None
+        data = JSONParser().parse(request)
+        if INPUT_SIGNATURE in data:
+            input_condition = data.get(INPUT_SIGNATURE)
+        output : AssignedWeek = schedule(Shift_id=s_id, employee_roles=employees_roles, strategies=input_condition)
+        output_data = output.get_dict_format()
+        return JsonResponse(data=output_data, safe=False)
