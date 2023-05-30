@@ -1,13 +1,22 @@
-from rest_framework import authentication, permissions, viewsets
-from rest_framework.decorators import api_view
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from .bl_domains.company_domain import *
 from .bl_domains.employee_domain import *
 from .bl_domains.role_domain import *
 from .bl_domains.team_domain import *
+from .bl_domains.task_domain import *
+from .bl_domains.shifts_domain import *
+from .constants import user_scope,manager_scope,employer_scope,admin_scope
 
 # ####### Company Domain ###### #
+
 @api_view(['GET', 'POST', 'PUT', 'DELETE'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def CompanyView(request, *args, **kwargs):
+    # TODO: check Auth level and proceed accordingly
+
     if request.method == 'GET':
         return CompanyGet(request, *args, **kwargs)
     if request.method == 'POST':
@@ -20,6 +29,8 @@ def CompanyView(request, *args, **kwargs):
 
 # ######## Role Domain ######## #
 @api_view(['GET', 'POST', 'PUT', 'DELETE'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def RoleView(request, *args, **kwargs):
     if request.method == 'GET':
         return RoleGet(request, *args, **kwargs)
@@ -31,6 +42,8 @@ def RoleView(request, *args, **kwargs):
         return RoleDelete(request, *args, **kwargs)
 
 @api_view(['GET', 'POST', 'PUT', 'DELETE'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def RoleReqView(request, *args, **kwargs):
     if request.method == 'GET':
         return RoleRequisiteGet(request, *args, **kwargs)
@@ -44,6 +57,8 @@ def RoleReqView(request, *args, **kwargs):
 
 # ######## Team Domain ######## #
 @api_view(['GET', 'POST', 'PUT', 'DELETE'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def TeamView(request, *args, **kwargs):
     if request.method == 'GET':
         return TeamGet(request, *args, **kwargs)
@@ -56,6 +71,8 @@ def TeamView(request, *args, **kwargs):
 
 
 @api_view(['GET', 'POST', 'PUT', 'DELETE'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def TeamReqView(request, *args, **kwargs):
     if request.method == 'GET':
         return TeamRequisiteGet(request, *args, **kwargs)
@@ -68,6 +85,8 @@ def TeamReqView(request, *args, **kwargs):
 
 
 @api_view(['GET', 'POST', 'PUT', 'DELETE'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def TeamEmployeeView(request, *args, **kwargs):
     if request.method == 'GET':
         return TeamEmployeeGet(request, *args, **kwargs)
@@ -83,6 +102,9 @@ def TeamEmployeeView(request, *args, **kwargs):
 
 @api_view(['GET', 'POST', 'PUT', 'DELETE'])
 def EmployeeView(request, *args, **kwargs):
+    '''
+        USER view
+    '''
     if request.method == 'GET':
         return EmployeeGet(request, *args, **kwargs)
     if request.method == 'POST':
@@ -94,6 +116,8 @@ def EmployeeView(request, *args, **kwargs):
 
 
 @api_view(['GET', 'POST', 'PUT', 'DELETE'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def EmployeeSuperiorView(request, *args, **kwargs):
     if request.method == 'GET':
         return EmployeeSuperiorGet(request, *args, **kwargs)
@@ -106,6 +130,8 @@ def EmployeeSuperiorView(request, *args, **kwargs):
 
 
 @api_view(['GET', 'POST', 'PUT', 'DELETE'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def EmployeeRoleView(request, *args, **kwargs):
     if request.method == 'GET':
         return EmployeeRoleGet(request, *args, **kwargs)
@@ -115,3 +141,60 @@ def EmployeeRoleView(request, *args, **kwargs):
         return EmployeeRolePut(request, *args, **kwargs)
     if request.method == 'DELETE':
         return EmployeeRoleDelete(request, *args, **kwargs)
+    
+
+# ######## Shifts Domain ######## #
+
+@api_view(['GET', 'POST', 'PUT', 'DELETE'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def ShiftsView(request, *args, **kwargs):
+    if request.method == 'GET':
+        return ShiftsGet(request, *args, **kwargs)
+    if request.method == 'POST':
+        return ShiftsPost(request, *args, **kwargs)
+    if request.method == 'PUT':
+        return ShiftsPut(request, *args, **kwargs)
+    if request.method == 'DELETE':
+        return ShiftsDelete(request, *args, **kwargs)
+    
+@api_view(['GET', 'POST', 'PUT', 'DELETE'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def WeeklyPrefView(request, *args, **kwargs):
+    if request.method == 'GET':
+        return WeeklyPrefGet(request, *args, **kwargs)
+    if request.method == 'POST':
+        return WeeklyPrefPost(request, *args, **kwargs)
+    if request.method == 'PUT':
+        return WeeklyPrefPut(request, *args, **kwargs)
+    if request.method == 'DELETE':
+        return WeeklyPrefDelete(request, *args, **kwargs)
+    
+@api_view(['GET', 'POST', 'PUT', 'DELETE'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def AssignmentsView(request, *args, **kwargs):
+    if request.method == 'GET':
+        return AssignmentsGet(request, *args, **kwargs)
+    if request.method == 'POST':
+        return AssignmentsPost(request, *args, **kwargs)
+    if request.method == 'PUT':
+        return AssignmentsPut(request, *args, **kwargs)
+    if request.method == 'DELETE':
+        return AssignmentsDelete(request, *args, **kwargs)
+
+# ######### Task Domain ######### #
+
+@api_view(['GET', 'POST', 'PUT', 'DELETE'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def TaskView(request, *args, **kwargs):
+    if request.method == 'GET':
+        return TaskGet(request, *args, **kwargs)
+    if request.method == 'POST':
+        return TaskPost(request, *args, **kwargs)
+    if request.method == 'PUT':
+        return TaskPut(request, *args, **kwargs)
+    if request.method == 'DELETE':
+        return TaskDelete(request, *args, **kwargs)

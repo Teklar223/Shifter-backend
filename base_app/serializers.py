@@ -1,6 +1,16 @@
 from rest_framework import serializers
 from .models import *
 
+''' User '''
+
+class EmployeeSerializer(serializers.ModelSerializer):
+    '''
+        Alias for CustomUserSerializer
+    '''
+    class Meta:
+        model = CustomUser
+        fields = "__all__" # TODO: has to hide password!
+
 ''' Company '''
 
 class CompanySerializer(serializers.ModelSerializer):
@@ -38,10 +48,6 @@ class TeamEmployeeSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 ''' Employee '''
-class EmployeeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Employee
-        fields = "__all__"
 
 class EmployeeSuperiorSerializer(serializers.ModelSerializer):
     class Meta:

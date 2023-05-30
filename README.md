@@ -20,6 +20,7 @@
 
 #### 3. ``` pip install -r ./requirements.txt ```
 
+#### *. ``` pip freeze > requirements.txt ``` when installing/upgrading libraries
 
 ### Django Links
 * https://stackoverflow.com/questions/55805865/is-django-a-mvc-or-mvt-framework
@@ -35,3 +36,7 @@
 
 ### How to setup postgreDB for local/dev settingg
 * [blogpost](https://stackpython.medium.com/how-to-start-django-project-with-a-database-postgresql-aaa1d74659d8)
+
+## Auth
+
+* temporary superuser email is yonaratner@gmail.com

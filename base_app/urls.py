@@ -1,9 +1,11 @@
-from django.urls import path, include
-from rest_framework import routers
+from django.urls import path
+from rest_framework.authtoken import views as auth_views
 from .constants import * # all id's come from here
 from . import views
 
-# TODO: is passing auto-id needed? (for example role_requisite_id)
+auth_patterns = [
+    path('api/token-auth/', auth_views.obtain_auth_token)
+]
 
 company_patterns = [
     path(f'api/', views.CompanyView),
@@ -31,11 +33,19 @@ employee_patterns = [
     path(f'api/<slug:{company_id}>/employee/<slug:{employee_id}>/', views.EmployeeView),
     path(f'api/<slug:{company_id}>/employeesup/', views.EmployeeSuperiorView),
     path(f'api/<slug:{company_id}>/employeesup/<slug:{employee_id}>/', views.EmployeeSuperiorView),
-    # *****************************************TODO: ^ pass superior_id in request body?
     path(f'api/<slug:{company_id}>/employeerole/', views.EmployeeRoleView),
     path(f'api/<slug:{company_id}>/employeerole/<slug:{employee_id}>/', views.EmployeeRoleView),
 ]
 
-urlpatterns = []
+task_patterns =[] # TODO
 
-urlpatterns += company_patterns + role_patterns + team_patterns + employee_patterns
+shift_patterns = [
+    path(f'api/<slug:{company_id}>/shifts/', views.ShiftsView),
+    path(f'api/<slug:{company_id}>/shifts/<slug:{team_id}>/', views.ShiftsView),
+    path(f'api/<slug:{company_id}>/weeklypref/', views.WeeklyPrefView),
+    path(f'api/<slug:{company_id}>/weeklypref/<slug:{employee_id}>/', views.WeeklyPrefView),
+]
+
+urlpatterns = [] + auth_patterns
+
+urlpatterns += company_patterns + role_patterns + team_patterns + employee_patterns + shift_patterns + task_patterns

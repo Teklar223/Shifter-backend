@@ -4,8 +4,6 @@ from ..constants import company_id # id's come from heres
 from ..models import Company
 from ..serializers import CompanySerializer
 
-# TODO: You called this URL via PUT, but the URL doesn't end in a slash and you have APPEND_SLASH set. Django can't redirect to the slash URL while maintaining PUT data. Change your form to point to 127.0.0.1:8000/api/1/ (note the trailing slash), or set APPEND_SLASH=False in your Django settings.
-
 def CompanyGet(request, *args, **kwargs) -> JsonResponse:
     #TODO: handle 301 (resource not found) *and then do so for all requests
     if company_id in kwargs:
@@ -44,7 +42,6 @@ def CompanyPut(request, *args, **kwargs) -> JsonResponse:
 
 def CompanyDelete(request, *args, **kwargs) -> JsonResponse:
     if company_id in kwargs:
-        # data = JSONParser().parse(request)
         id = kwargs.get(company_id)
         company = Company.objects.filter(id = id)
         company.delete()

@@ -3,13 +3,16 @@ from rest_framework.parsers import JSONParser
 from ..constants import team_id, employee_id, company_id, role_id, error_id
 from ..models import Team,TeamEmployee,TeamRoleRequisites
 from ..serializers import TeamSerializer, TeamEmployeeSerializer, TeamRequisiteSerializer
-from ..util import prints_args_kwargs # TODO: rm
 
 ''' Team  '''
 
+# TODO : check for company_id validity as needed
+
 def TeamGet(request, *args, **kwargs) -> JsonResponse:
     if team_id in kwargs:
-        team = Team.objects.get(id = kwargs.get(team_id, error_id), company_id= kwargs.get(company_id, error_id))
+        id = kwargs.get(team_id)
+        companyID = kwargs.get(company_id)
+        team = Team.objects.get(id = id, company_id = companyID)
         serializer = TeamSerializer(team, many=False)
         return JsonResponse(serializer.data, safe=False)
     else:
@@ -26,16 +29,37 @@ def TeamPost(request, *args, **kwargs) -> JsonResponse:
     return JsonResponse(serializer.errors, status=400)
 
 def TeamPut(request, *args, **kwargs) -> JsonResponse:
-    pass
+    if team_id in kwargs:
+        data = JSONParser().parse(request)
+        id = kwargs.get(team_id)
+        team = Team.objects.get(id = id)
+        serializer = TeamSerializer(team, data = data, partial = True)
+        if serializer.is_valid():
+            serializer.save()
+            response = serializer.data
+            return JsonResponse(response, status=202)
+        else:
+            return JsonResponse(serializer.errors, status=500)
+    else:
+        return JsonResponse("Forbidenn", status=401)
 
 def TeamDelete(request, *args, **kwargs) -> JsonResponse:
-    pass
+    if team_id in kwargs:
+        id = kwargs.get(team_id)
+        team = Team.objects.filter(id = id)
+        team.delete()
+        response = "Successfully deleted 'Team' with ID="+id
+        return JsonResponse(response, status=200,safe=False)
+    else:
+        return JsonResponse("Forbidden", status=401)
 
 ''' Team Requisite '''
 
 def TeamRequisiteGet(request, *args, **kwargs) -> JsonResponse:
     if team_id in kwargs:
-        teamReq = TeamRoleRequisites.objects.get(team_id = kwargs.get(team_id, error_id), role_id= request.GET.get(role_id))
+        id = kwargs.get(team_id)
+        roleID = request.GET.get(role_id)
+        teamReq = TeamRoleRequisites.objects.get(team_id = id, role_id= roleID)
         serializer = TeamRequisiteSerializer(teamReq, many=False)
         return JsonResponse(serializer.data, safe=False)
     else:
@@ -52,16 +76,39 @@ def TeamRequisitePost(request, *args, **kwargs) -> JsonResponse:
     return JsonResponse(serializer.errors, status=400)
 
 def TeamRequisitePut(request, *args, **kwargs) -> JsonResponse:
-    pass
+    roleID = request.PUT.get(role_id) # Query
+    if team_id in kwargs and roleID is not None:
+        data = JSONParser().parse(request)
+        id = kwargs.get(team_id)
+        teamReq = TeamRoleRequisites.objects.get(team_id = id, role_id = roleID)
+        serializer = TeamRequisiteSerializer(teamReq, data = data, partial = True)
+        if serializer.is_valid():
+            serializer.save()
+            response = serializer.data
+            return JsonResponse(response, status=202)
+        else:
+            return JsonResponse(serializer.errors, status=500)
+    else:
+        return JsonResponse("Forbidenn", status=401)
 
 def TeamRequisiteDelete(request, *args, **kwargs) -> JsonResponse:
-    pass
+    roleID = request.PUT.get(role_id) # Query
+    if team_id in kwargs and roleID is not None:
+        id = kwargs.get(team_id)
+        teamReq = TeamRoleRequisites.objects.filter(team_id = id, role_id = roleID)
+        teamReq.delete()
+        response = "Successfully deleted 'Team Role Requisite'"
+        return JsonResponse(response, status=200,safe=False)
+    else:
+        return JsonResponse("Forbidden", status=401)
 
 ''' Team Employee '''
 
 def TeamEmployeeGet(request, *args, **kwargs) -> JsonResponse:
-    if team_id in kwargs:
-        teamEmp = TeamEmployee.objects.get(team_id = kwargs.get(team_id, error_id), employee_id = request.GET.get(employee_id))
+    employeeID = request.GET.get(employee_id)
+    if team_id in kwargs or employeeID is not None:
+        id = kwargs.get(team_id)
+        teamEmp = TeamEmployee.objects.get(team_id = id, employee_id = employeeID)
         serializer = TeamEmployeeSerializer(teamEmp, many=False)
         return JsonResponse(serializer.data, safe=False)
     else:
@@ -69,8 +116,8 @@ def TeamEmployeeGet(request, *args, **kwargs) -> JsonResponse:
         serializer = TeamEmployeeSerializer(teamEmp, many=True)
         return JsonResponse(serializer.data, safe=False)
     
-
 def TeamEmployeePost(request, *args, **kwargs) -> JsonResponse:
+    # TODO: can an employee be in several teams? (this might change the PUT/DELETE logic too!)
     data = JSONParser().parse(request)
     serializer = TeamEmployeeSerializer(data=data)
     if serializer.is_valid():
@@ -79,7 +126,28 @@ def TeamEmployeePost(request, *args, **kwargs) -> JsonResponse:
     return JsonResponse(serializer.errors, status=400)
 
 def TeamEmployeePut(request, *args, **kwargs) -> JsonResponse:
-    pass
+    employeeID = request.PUT.get(employee_id) # Query
+    if team_id in kwargs or employeeID is not None:
+        data = JSONParser().parse(request)
+        id = kwargs.get(team_id)
+        teamEmp = TeamEmployee.objects.get(team_id = id, employee_id = employeeID)
+        serializer = TeamEmployeeSerializer(teamEmp, data = data, partial = True)
+        if serializer.is_valid():
+            serializer.save()
+            response = serializer.data
+            return JsonResponse(response, status=202)
+        else:
+            return JsonResponse(serializer.errors, status=500)
+    else:
+        return JsonResponse("Forbidden", status=401)
 
 def TeamEmployeeDelete(request, *args, **kwargs) -> JsonResponse:
-    pass
+    employeeID = request.DELETE.get(employee_id) # Query
+    if team_id in kwargs or employeeID is not None:
+        id = kwargs.get(team_id)
+        teamEmp = TeamEmployee.objects.filter(team_id = id, employee_id = employeeID)
+        teamEmp.delete()
+        response = "Successfully deleted 'Employee from team'"
+        return JsonResponse(response, status=200,safe=False)
+    else:
+        return JsonResponse("Forbidden", status=401)
