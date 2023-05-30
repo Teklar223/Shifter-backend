@@ -105,8 +105,8 @@ class Base(Configuration):
     # Static files (CSS, JavaScript, Images)
     # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
-    STATIC_URL = '/static/'
-    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+    #STATIC_URL = '/static/'
+    #STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
     # need to whitelist the url where the frontend is being served.
     #CORS_ORIGIN_WHITELIST = [ 
@@ -161,7 +161,7 @@ class Prod(Base):
             'ENGINE': 'django.db.backends.postgresql',
             'NAME': 'railway',
             'USER': 'postgres',
-            'PASSWORD': 'OEHKq4LReCNNjg2tQx1f', # TODO: hide in ENV...
+            'PASSWORD': os.environ.get("RAILWAY_PASSWORD"),
             'HOST': 'containers-us-west-153.railway.app',
             'PORT': '7077',
         }
