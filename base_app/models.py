@@ -37,6 +37,7 @@ class CustomUser(AbstractUser):
     # last_name  (inherited)
     # is_active  (inherited)
     permission_scope = models.CharField(max_length=10, default=user_scope)
+    is_admin = models.BooleanField(default=False)
     # TODO: Add image API   
 
 
@@ -44,7 +45,6 @@ class CustomUser(AbstractUser):
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = [] # important
-
 
 ''' auto-id by the ORM '''
 class Company(models.Model):
@@ -68,6 +68,7 @@ class Team(models.Model):
     # id
     company_id  =   models.ForeignKey('Company', on_delete=models.CASCADE, null=True, blank=True)
     name        =   models.TextField(default="New Team",null=True, blank=True)
+    manager     =   models.ForeignKey('CustomUser', on_delete=models.SET_NULL, null=True, blank=True)
 
 class TeamRoleRequisites(models.Model):
     # id
