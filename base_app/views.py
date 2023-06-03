@@ -101,6 +101,8 @@ def TeamEmployeeView(request, *args, **kwargs):
 # ####### Employee Domain ####### #
 
 @api_view(['GET', 'POST', 'PUT', 'DELETE'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def EmployeeView(request, *args, **kwargs):
     '''
         USER view

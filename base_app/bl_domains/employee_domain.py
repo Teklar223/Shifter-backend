@@ -11,14 +11,18 @@ def EmployeeGet(request, *args, **kwargs) -> JsonResponse:
     Employee = CustomerUser
     expects company_id and employee_id in kwargs, and superior_id in query
     '''
-    if employee_id in kwargs:
-        employee = Employee.objects.get(id = kwargs.get(employee_id))
-        serializer = EmployeeSerializer(employee, many=False)
-        return JsonResponse(serializer.data, safe=False)
-    else:
-        employee = Employee.objects.all()
-        serializer = EmployeeSerializer(employee, many=True)
-        return JsonResponse(serializer.data, safe=False)
+    employee = request.user
+    serializer = EmployeeSerializer(employee, many=False)
+    return JsonResponse(serializer.data, safe=False)
+    # if employee_id in kwargs:
+    #     employee = Employee.objects.get(id = kwargs.get(employee_id))
+    #     serializer = EmployeeSerializer(employee, many=False)
+    #     return JsonResponse(serializer.data, safe=False)
+    # else:
+    #     print(request.user.company_id.pk)
+    #     employee = Employee.objects.all()
+    #     serializer = EmployeeSerializer(employee, many=True)
+    #     return JsonResponse(serializer.data, safe=False)
 
 def EmployeePost(request, *args, **kwargs) -> JsonResponse:
     data = JSONParser().parse(request)
