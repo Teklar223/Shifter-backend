@@ -136,15 +136,15 @@ class Dev(Base):
 
     # Database
     # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
-
+    # TODO: fix getting env vars
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'localdb',
+            'NAME': 'railway',
             'USER': 'postgres',
-            'PASSWORD': 'admin',
-            'HOST': '127.0.0.1',
-            'PORT': '5432',
+            'PASSWORD': '4k56cLidw72aislJlyTa',
+            'HOST': 'containers-us-west-25.railway.app',
+            'PORT': '7447',
         }
     }
 

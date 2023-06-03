@@ -28,8 +28,8 @@ class CustomUser(AbstractUser):
     '''
         Equivalent/Aliased as "Employee"
     '''
-    username   = None # this allows email to act as a UID
-    email      = models.EmailField(unique=True)
+    username   = models.EmailField(unique=True) # this allows email to act as a UID
+    # email      = None
     company_id = models.ForeignKey('Company', on_delete=models.SET_NULL, null=True, blank=True)
     team_id    = models.ForeignKey('Team', on_delete=models.SET_NULL, null=True, blank=True)
     role_id    = models.ForeignKey('Role', on_delete=models.SET_NULL, null=True, blank=True)
@@ -43,7 +43,7 @@ class CustomUser(AbstractUser):
 
     objects = CustomUserManager()
 
-    USERNAME_FIELD = 'email'
+    USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = [] # important
 
 ''' auto-id by the ORM '''

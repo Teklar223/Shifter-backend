@@ -16,6 +16,7 @@ def ShiftsGet(request, *args, **kwargs) -> JsonResponse:
         @ team_id is passed throguh kwargs (as a slug)
         @ shift_id is passed in *BODY*
     '''
+    # TODO: pass a list of team id's in the body instead of through the slug
     if team_id in kwargs:
         handler: Shifts_Handler = Shifts_Handler()
         shifts = handler.get_recent_shifts_by_team_id(team_id = kwargs.get(team_id))
