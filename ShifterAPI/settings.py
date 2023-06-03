@@ -162,7 +162,7 @@ class Prod(Base):
             'NAME': 'railway',
             'USER': 'postgres',
             'PASSWORD': os.environ.get("RAILWAY_PASSWORD"),
-            'HOST': 'containers-us-west-153.railway.app',
-            'PORT': '7077',
+            'HOST': 'containers-us-west-25.railway.app',
+            'PORT': '7447',
         }
     }

@@ -6,18 +6,14 @@ from .constants import user_scope
 
 class CustomUserManager(BaseUserManager):
 
-    def create_user(self, email, password, company_id = None , employee_id = None, team_id = None , role_id = None):
-        if not email:
-            raise ValueError('Users must have an email address')
-
-        user = self.model(email = self.normalize_email(email))
-
+    def create_user(self, username, password, company_id = None , employee_id = None, team_id = None , role_id = None):
+        user = self.model(username = self.normalize_email(username))
         user.set_password(password)
         user.save(using = self._db)
         return user
         
-    def create_superuser(self, email, password=None):
-        user = self.create_user(email = email,  password = password )
+    def create_superuser(self, username, password):
+        user = self.create_user(username = username,  password = password )
         user.is_admin = True
         user.is_superuser = True
         user.is_staff = True
@@ -28,8 +24,8 @@ class CustomUser(AbstractUser):
     '''
         Equivalent/Aliased as "Employee"
     '''
-    username   = None # this allows email to act as a UID
-    email      = models.EmailField(unique=True)
+    username   = models.EmailField(unique=True) # this allows email to act as a UID
+    # email      = None
     company_id = models.ForeignKey('Company', on_delete=models.SET_NULL, null=True, blank=True)
     team_id    = models.ForeignKey('Team', on_delete=models.SET_NULL, null=True, blank=True)
     role_id    = models.ForeignKey('Role', on_delete=models.SET_NULL, null=True, blank=True)
@@ -37,14 +33,14 @@ class CustomUser(AbstractUser):
     # last_name  (inherited)
     # is_active  (inherited)
     permission_scope = models.CharField(max_length=10, default=user_scope)
+    is_admin = models.BooleanField(default=False)
     # TODO: Add image API   
 
 
     objects = CustomUserManager()
 
-    USERNAME_FIELD = 'email'
+    USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = [] # important
-
 
 ''' auto-id by the ORM '''
 class Company(models.Model):
@@ -68,6 +64,7 @@ class Team(models.Model):
     # id
     company_id  =   models.ForeignKey('Company', on_delete=models.CASCADE, null=True, blank=True)
     name        =   models.TextField(default="New Team",null=True, blank=True)
+    manager     =   models.ForeignKey('CustomUser', on_delete=models.SET_NULL, null=True, blank=True)
 
 class TeamRoleRequisites(models.Model):
     # id
