@@ -1,7 +1,7 @@
 from django.http import JsonResponse
 from rest_framework.parsers import JSONParser
 from ..constants import employee_id, superior_id, company_id, error_id, role_id
-from ..models import EmployeeSuperior,EmployeeRole, CustomUser as Employee
+from ..models import EmployeeSuperior,EmployeeRole, CustomUser as Employee, Role, Team
 from ..serializers import EmployeeSerializer, EmployeeSuperiorSerializer, EmployeeRoleSerializer
 
 ''' Employee  '''
@@ -13,7 +13,20 @@ def EmployeeGet(request, *args, **kwargs) -> JsonResponse:
     '''
     employee = request.user
     serializer = EmployeeSerializer(employee, many=False)
-    return JsonResponse(serializer.data, safe=False)
+    data = serializer.data
+
+    # Append the role name based on the user's role_id
+    role_id = data.get('role_id')
+    if role_id:
+        role = Role.objects.filter(id=role_id).first()
+        if role:
+            data['role_name'] = role.name
+
+    # Append a list of all team IDs where manager.id = user.id
+    team_ids = Team.objects.filter(manager=employee).values_list('id', flat=True)
+    data['team_ids'] = list(team_ids)
+
+    return JsonResponse(data, safe=False)
     # if employee_id in kwargs:
     #     employee = Employee.objects.get(id = kwargs.get(employee_id))
     #     serializer = EmployeeSerializer(employee, many=False)

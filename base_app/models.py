@@ -6,18 +6,14 @@ from .constants import user_scope
 
 class CustomUserManager(BaseUserManager):
 
-    def create_user(self, email, password, company_id = None , employee_id = None, team_id = None , role_id = None):
-        if not email:
-            raise ValueError('Users must have an email address')
-
-        user = self.model(email = self.normalize_email(email))
-
+    def create_user(self, username, password, company_id = None , employee_id = None, team_id = None , role_id = None):
+        user = self.model(username = self.normalize_email(username))
         user.set_password(password)
         user.save(using = self._db)
         return user
         
-    def create_superuser(self, email, password=None):
-        user = self.create_user(email = email,  password = password )
+    def create_superuser(self, username, password):
+        user = self.create_user(username = username,  password = password )
         user.is_admin = True
         user.is_superuser = True
         user.is_staff = True
