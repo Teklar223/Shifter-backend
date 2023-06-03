@@ -3,15 +3,6 @@ from django.apps import apps
 from .models import CustomUser as User
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import UserChangeForm, UserCreationForm
-'''
-class CustomUserAdmin(admin.ModelAdmin):
-    exclude = tuple() # ('password',) # TODO: Exclude password
-    ordering = ('email',)
-    list_display = ('email', 'first_name', 'last_name', 'is_superuser')
-    search_fields = ('email', 'first_name', 'last_name')
-    list_filter = ('is_superuser',)
-    readonly_fields = tuple() # ('email',) # TODO: email is readonly
-'''
 
 class CustomUserChangeForm(UserChangeForm):
     class Meta(UserChangeForm.Meta):
@@ -26,18 +17,28 @@ class CustomUserCreationForm(UserCreationForm):
 class CustomUserAdmin(BaseUserAdmin):
     form = CustomUserChangeForm
     add_form = CustomUserCreationForm
-    ordering = ('email',)
-    search_fields = ('email', 'first_name', 'last_name')
+    ordering = ('username',)
+    search_fields = ('username', 'first_name', 'last_name')
     list_filter = ('is_superuser',)
-    readonly_fields = ('email',)
+
+    fieldsets = (
+        (None, {'fields': ('username',)}),
+        ('Personal Info', {'fields': ('first_name', 'last_name')}),
+        ('Permissions', {'fields': ('is_active', 'is_admin', 'permission_scope')}),
+        ('Relationships', {'fields': ('company_id', 'team_id', 'role_id')}),
+    )
+
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('username', 'password1', 'password2'),
+        }),
+    )
 
     def get_fieldsets(self, request, obj=None):
-        fieldsets = super().get_fieldsets(request, obj)
         if not obj:  # Creating a new user
-            fieldsets += (
-                (None, {'fields': ('email',)}),
-            )
-        return fieldsets
+            return self.add_fieldsets
+        return super().get_fieldsets(request, obj)
 
 
 all_models = apps.get_models()
