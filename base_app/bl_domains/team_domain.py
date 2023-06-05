@@ -9,19 +9,37 @@ import json
 
 # TODO : check for company_id validity as needed
 
-def TeamGet(request, *args, **kwargs) -> JsonResponse:
-    # TODO: we pass multiple team ids - retrieve all of them somehow (pretty)
+def TeamGet(request, *args, **kwargs) -> JsonResponse:        
     if team_id in kwargs:
-        id = kwargs.get(team_id)
-        companyID = kwargs.get(company_id)
-        team = Team.objects.get(id = id, company_id = companyID)
-        serializer = TeamSerializer(team, many=False)
-        return JsonResponse(serializer.data, safe=False)
-    else:
-        # todo get by companyID
+        # Temporary way to get all the teams
+        # TODO get by companyID
         team = Team.objects.all()
         serializer = TeamSerializer(team, many=True)
         return JsonResponse(serializer.data, safe=False)
+    else:
+        ''''''
+        team = Team.objects.all()
+        serializer = TeamSerializer(team, many=True)
+        print(serializer.data)
+        ''''''
+        team_ids = []
+
+        try:
+            body = json.loads(request.body)
+            team_ids = body.get('team_ids', [])
+        except json.JSONDecodeError:
+            pass
+
+        data = []
+        for id in team_ids:
+            try:
+                team = Team.objects.get(id=id)
+                serializer = TeamSerializer(team)
+                data.append(serializer.data)
+            except Team.DoesNotExist:
+                pass
+
+        return JsonResponse(data, status=200, safe=False)
     
 def TeamPost(request, *args, **kwargs) -> JsonResponse:
     data = JSONParser().parse(request)
