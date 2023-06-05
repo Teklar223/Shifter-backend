@@ -41,7 +41,8 @@ def EmployeePost(request, *args, **kwargs) -> JsonResponse:
     data = JSONParser().parse(request)
     serializer = EmployeeSerializer(data=data)
     if serializer.is_valid():
-        serializer.save()
+        user: Employee = serializer.save()
+        user.set_password(data["password"])
         return JsonResponse(serializer.data, status=201)
     return JsonResponse(serializer.errors, status=400)
 
