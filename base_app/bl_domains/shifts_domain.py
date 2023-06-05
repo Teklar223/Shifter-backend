@@ -9,7 +9,7 @@ from ..mongo.constants import Shift_id, Employee_id, Team_id, Company_id, INPUT_
 from ..mongo.Models.PostAssignment.AssignedWeek import AssignedWeek, AssignedEvent, AssignedDay
 from ..mongo.AssignmentsHandler import Assignment_Handler
 from ..mongo.SchedulingAlgorithm.Algorithm import schedule
-# from ..mong
+from ..mongo.ShiftTemplateHandler import Shift_Template_Handler, Shift_Template
 ''' Shifts  '''
 
 def ShiftsGet(request, *args, **kwargs) -> JsonResponse:
@@ -304,8 +304,43 @@ def SchedulingAlgorithmRun(request, *args, **kwargs) -> JsonResponse:
     #################################### Shift Template Domain
 
     def Shift_Templates_Get(request, *args, **kwargs) -> JsonResponse:
+        handler = Shift_Template_Handler()
         if Team_id in kwargs:
             data = JSONParser().parse(request)
-            get_count = data["Count"]
-            skip_count = data["SkipCount"]
+            if "Count" in data.keys() and "SkipCount" in data.keys():
+                get_count = data["Count"]
+                skip_count = data["SkipCount"]
+                output = handler.get_batch_by_team_id(team_id=team_id, skip_count=skip_count, count=get_count)
+                output = [x.serialize() for x in output]
+                return JsonResponse(data=output, safe=False)
+            else:
+                output = handler.get_all_by_team_id(team_id=team_id)
+                output = [x.serialize() for x in output]
+                return JsonResponse(data=output, safe=False)
+            
+    def Shift_Template_Post(request, *args, **kwargs) -> JsonResponse:
+        handler = Shift_Template_Handler()
+        data = JSONParser().parse(request)
+        template = Shift_Template.deserialize(data)
+        handler.add_new_shift_template(shift_template=template)
+        return JsonResponse(status=201, safe=False)
+    
+    def Shift_Template_Put(request, *args, **kwargs) -> JsonResponse:
+        handler = Shift_Template_Handler()
+        data = JSONParser().parse(request)
+        template = Shift_Template.deserialize(data)
+        handler.update_template(shift_template=template)
+        return JSONParser(safe=False)
+    
+    def Shift_Template_Delete(request, *args, **kwargs) -> JsonResponse:
+        handler = Shift_Template_Handler()
+        if Template_id in kwargs:
+            template_id = kwargs.get(Template_id)
+            handler.delete_template(template_id=template_id)
+            return JsonResponse(safe=False, status=201)
+        else:
+            return JsonResponse(safe=False, status=404)
+
+            
+
             
