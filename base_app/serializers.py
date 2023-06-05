@@ -9,7 +9,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
     '''
     class Meta:
         model = CustomUser
-        fields = "__all__" # TODO: has to hide password!
+        exclude = ['password']
 
 ''' Company '''
 

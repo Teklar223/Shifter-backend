@@ -1,14 +1,16 @@
 from django.http import JsonResponse
 from rest_framework.parsers import JSONParser
 from ..constants import team_id, employee_id, company_id, role_id, error_id
-from ..models import Team,TeamEmployee,TeamRoleRequisites
-from ..serializers import TeamSerializer, TeamEmployeeSerializer, TeamRequisiteSerializer
+from ..models import Team,TeamEmployee,TeamRoleRequisites, CustomUser as Employee
+from ..serializers import TeamSerializer, TeamEmployeeSerializer, TeamRequisiteSerializer, EmployeeSerializer
+import json
 
 ''' Team  '''
 
 # TODO : check for company_id validity as needed
 
 def TeamGet(request, *args, **kwargs) -> JsonResponse:
+    # TODO: we pass multiple team ids - retrieve all of them somehow (pretty)
     if team_id in kwargs:
         id = kwargs.get(team_id)
         companyID = kwargs.get(company_id)
@@ -16,10 +18,11 @@ def TeamGet(request, *args, **kwargs) -> JsonResponse:
         serializer = TeamSerializer(team, many=False)
         return JsonResponse(serializer.data, safe=False)
     else:
+        # todo get by companyID
         team = Team.objects.all()
         serializer = TeamSerializer(team, many=True)
         return JsonResponse(serializer.data, safe=False)
-
+    
 def TeamPost(request, *args, **kwargs) -> JsonResponse:
     data = JSONParser().parse(request)
     serializer = TeamSerializer(data=data)
@@ -105,19 +108,24 @@ def TeamRequisiteDelete(request, *args, **kwargs) -> JsonResponse:
 ''' Team Employee '''
 
 def TeamEmployeeGet(request, *args, **kwargs) -> JsonResponse:
-    employeeID = request.GET.get(employee_id)
-    if team_id in kwargs or employeeID is not None:
-        id = kwargs.get(team_id)
-        teamEmp = TeamEmployee.objects.get(team_id = id, employee_id = employeeID)
-        serializer = TeamEmployeeSerializer(teamEmp, many=False)
-        return JsonResponse(serializer.data, safe=False)
-    else:
-        teamEmp = TeamEmployee.objects.all()
-        serializer = TeamEmployeeSerializer(teamEmp, many=True)
-        return JsonResponse(serializer.data, safe=False)
+    team_ids = []
+
+    try:
+        body = json.loads(request.body)
+        team_ids = body.get('team_ids', [])
+    except json.JSONDecodeError:
+        pass
+
+    data = []
+    for team_id in team_ids:
+        users = Employee.objects.filter(team_id=team_id)
+        serialized_users = EmployeeSerializer(users, many=True).data
+        data.extend(serialized_users)
+
+    return JsonResponse(data, status=200, safe=False)
+
     
 def TeamEmployeePost(request, *args, **kwargs) -> JsonResponse:
-    # TODO: can an employee be in several teams? (this might change the PUT/DELETE logic too!)
     data = JSONParser().parse(request)
     serializer = TeamEmployeeSerializer(data=data)
     if serializer.is_valid():
