@@ -3,9 +3,13 @@
 
 from ShifterAPI import utils # imports os
 import sys
+import dotenv
 
 
 def main():
+    "load env"
+    dotenv.load_dotenv()
+
     """Run administrative tasks."""
     utils.setConfig()
     try:
