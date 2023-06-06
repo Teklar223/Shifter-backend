@@ -1,9 +1,9 @@
 import pymongo
 from bson import ObjectId
 
-from .Models.PostAssignment.AssignedWeek import AssignedEvent, AssignedDay, AssignedWeek
-from .Collection_Handler import CollectionHandler
-from .constants import *
+from base_app.mongo.Models.PostAssignment.AssignedWeek import AssignedEvent, AssignedDay, AssignedWeek
+from base_app.mongo.Collection_Handler import CollectionHandler
+from base_app.mongo.constants import *
 
 class Assignment_Handler(CollectionHandler):
     def __init__(self):

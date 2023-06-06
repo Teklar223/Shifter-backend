@@ -1,6 +1,6 @@
 from base_app.mongo.SchedulingAlgorithm.Strategies.Stratrgy import Strategy
 from ortools.sat.python import cp_model
-from .TimeUtils import calculate_hours
+from base_app.mongo.SchedulingAlgorithm.Strategies.HourStrategies.TimeUtils import calculate_hours
 
 """
 This class is the strategy to limit the maximum working per week for given employees

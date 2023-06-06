@@ -1,8 +1,8 @@
 from django.http import JsonResponse
 from rest_framework.parsers import JSONParser
-from ..constants import company_id # id's come from heres
-from ..models import Company
-from ..serializers import CompanySerializer
+from base_app.constants import company_id # id's come from heres
+from base_app.models import Company
+from base_app.serializers import CompanySerializer
 
 def CompanyGet(request, *args, **kwargs) -> JsonResponse:
     #TODO: handle 301 (resource not found) *and then do so for all requests

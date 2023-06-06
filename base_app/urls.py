@@ -1,7 +1,7 @@
 from django.urls import path
 from rest_framework.authtoken import views as auth_views
-from .constants import * # all id's come from here
-from . import views
+from base_app.constants import * # all id's come from here
+from base_app import views
 
 auth_patterns = [
     path('api/token-auth/', auth_views.obtain_auth_token)

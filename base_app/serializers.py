@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import *
+from base_app.models import *
 
 ''' User '''
 

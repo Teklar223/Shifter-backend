@@ -1,5 +1,5 @@
 from datetime import datetime
-from ...Tuple_Key import Tuple_Key
+from base_app.mongo.SchedulingAlgorithm.Tuple_Key import Tuple_Key
 def time_string_format(input: int):
     minutes = str(input)[-2:]
     hours = str(input)[:-2]

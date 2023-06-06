@@ -1,9 +1,9 @@
 import pymongo
 from bson import ObjectId
 
-from .Models.ShiftTemplate import Shift_Template
-from .Collection_Handler import CollectionHandler
-from .constants import *
+from base_app.mongo.Models.ShiftTemplate import Shift_Template
+from base_app.mongo.Collection_Handler import CollectionHandler
+from base_app.mongo.constants import *
 
 class Shift_Template_Handler(CollectionHandler):
     def __init__(self):

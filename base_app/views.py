@@ -1,13 +1,13 @@
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
-from .bl_domains.company_domain import *
-from .bl_domains.employee_domain import *
-from .bl_domains.role_domain import *
-from .bl_domains.team_domain import *
-from .bl_domains.task_domain import *
-from .bl_domains.shifts_domain import *
-from .constants import user_scope,manager_scope,employer_scope,admin_scope
+from base_app.bl_domains.company_domain import *
+from base_app.bl_domains.employee_domain import *
+from base_app.bl_domains.role_domain import *
+from base_app.bl_domains.team_domain import *
+from base_app.bl_domains.task_domain import *
+from base_app.bl_domains.shifts_domain import *
+from base_app.constants import user_scope,manager_scope,employer_scope,admin_scope
 
 # ####### Company Domain ###### #
 
