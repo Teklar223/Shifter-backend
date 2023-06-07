@@ -7,10 +7,9 @@ from base_app.mongo.Models.PostAssignment.AssignedWeek import AssignedDay, Assig
 import json
 from base_app.mongo.Models import Schedule, Shift
 from base_app.mongo.SchedulingAlgorithm.Strategies.Stratrgy import Strategy
-from .Strategies.HourStrategies.MaxHoursStrategy import Max_Hour_Daily_Strategy
-from .Strategies.HourStrategies.MaxHoursSchedule import Max_Hour_Schedule_Strategy
-from .Strategies.StrategyUtils import get_strategies, divide_strategies_by_role, isIntersect
-
+from base_app.mongo.SchedulingAlgorithm.Strategies.HourStrategies.MaxHoursStrategy import Max_Hour_Daily_Strategy
+from base_app.mongo.SchedulingAlgorithm.Strategies.HourStrategies.MaxHoursSchedule import Max_Hour_Schedule_Strategy
+from base_app.mongo.SchedulingAlgorithm.Strategies.StrategyUtils import get_strategies, divide_strategies_by_role, isIntersect
 
 # TODO: update maximum hours per day
 # Assuming that I get a dictionary from employee_id to role_id, seperate by roles and run the algorithm seperately

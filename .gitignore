@@ -3,6 +3,7 @@
 
 # general
 env
+.env
 
 ### VS - Code ###
 .vscode

@@ -1,8 +1,8 @@
 from django.http import JsonResponse
 from rest_framework.parsers import JSONParser
-from ..constants import employee_id, superior_id, company_id, error_id, role_id
-from ..models import EmployeeSuperior,EmployeeRole, CustomUser as Employee, Role, Team
-from ..serializers import EmployeeSerializer, EmployeeSuperiorSerializer, EmployeeRoleSerializer
+from base_app.constants import employee_id, superior_id, company_id, error_id, role_id
+from base_app.models import EmployeeSuperior,EmployeeRole, CustomUser as Employee, Role, Team
+from base_app.serializers import EmployeeSerializer, EmployeeSuperiorSerializer, EmployeeRoleSerializer
 
 ''' Employee  '''
 
@@ -21,6 +21,8 @@ def EmployeeGet(request, *args, **kwargs) -> JsonResponse:
         role = Role.objects.filter(id=role_id).first()
         if role:
             data['role_name'] = role.name
+        else:
+            data['role_name'] = ""
 
     # Append a list of all team IDs where manager.id = user.id
     team_ids = Team.objects.filter(manager=employee).values_list('id', flat=True)
@@ -41,7 +43,8 @@ def EmployeePost(request, *args, **kwargs) -> JsonResponse:
     data = JSONParser().parse(request)
     serializer = EmployeeSerializer(data=data)
     if serializer.is_valid():
-        serializer.save()
+        user: Employee = serializer.save()
+        user.set_password(data["password"])
         return JsonResponse(serializer.data, status=201)
     return JsonResponse(serializer.errors, status=400)
 

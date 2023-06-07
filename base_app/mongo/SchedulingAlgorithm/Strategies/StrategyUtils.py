@@ -1,7 +1,7 @@
 from base_app.mongo.SchedulingAlgorithm.Tuple_Key import Tuple_Key
-from .strategies_constants import *
-from .HourStrategies.MaxHoursSchedule import Max_Hour_Schedule_Strategy
-from .HourStrategies.MaxHoursStrategy import Max_Hour_Daily_Strategy
+from base_app.mongo.SchedulingAlgorithm.Strategies.strategies_constants import *
+from base_app.mongo.SchedulingAlgorithm.Strategies.HourStrategies.MaxHoursSchedule import Max_Hour_Schedule_Strategy
+from base_app.mongo.SchedulingAlgorithm.Strategies.HourStrategies.MaxHoursStrategy import Max_Hour_Daily_Strategy
 
 def get_strategies(strategies_dict: dict, shift_keys):
     strategies = []

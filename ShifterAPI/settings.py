@@ -149,6 +149,7 @@ class Dev(Base):
     }
 
 class Prod(Base):
+    from base_app.constants import railway_pass
     DEBUG = False
 
     ALLOWED_HOSTS = ['shifter-backend.herokuapp.com']
@@ -161,7 +162,7 @@ class Prod(Base):
             'ENGINE': 'django.db.backends.postgresql',
             'NAME': 'railway',
             'USER': 'postgres',
-            'PASSWORD': os.environ.get("RAILWAY_PASSWORD"),
+            'PASSWORD': os.environ.get(railway_pass),
             'HOST': 'containers-us-west-25.railway.app',
             'PORT': '7447',
         }

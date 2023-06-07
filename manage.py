@@ -3,11 +3,15 @@
 
 from ShifterAPI import utils # imports os
 import sys
+import dotenv
 
 
 def main():
+    "load env"
+    utils.setConfig() # load defaults first
+    dotenv.load_dotenv()
+
     """Run administrative tasks."""
-    utils.setConfig()
     try:
         from configurations.management import execute_from_command_line
         # from django.core.management import execute_from_command_line
