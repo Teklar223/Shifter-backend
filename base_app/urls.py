@@ -40,10 +40,31 @@ employee_patterns = [
 task_patterns =[] # TODO
 
 shift_patterns = [
+    #Shifts
     path(f'api/<slug:{company_id}>/shifts/', views.ShiftsView),
-    path(f'api/<slug:{company_id}>/shifts/<slug:{team_id}>/', views.ShiftsView),
+    # path(f'api/<slug:{company_id}>/shifts/<slug:{team_id}>/', views.ShiftsView),
+    path(f'api/<slug:{company_id}>/shifts/<slug:{shift_id}>/', views.ShiftsView),
+
+    #WeeklyPref
     path(f'api/<slug:{company_id}>/weeklypref/', views.WeeklyPrefView),
     path(f'api/<slug:{company_id}>/weeklypref/<slug:{employee_id}>/', views.WeeklyPrefView),
+    path(f'api/<slug:{company_id}>/weeklypref/<slug:{team_id}>/', views.WeeklyPrefView),
+
+    #Assignments
+    path(f'api/<slug:{company_id}>/assignments/', views.AssignmentsView),
+    path(f'api/<slug:{company_id}>/assignments/<slug:{shift_id}>/', views.AssignmentsView),
+    path(f'api/<slug:{company_id}>/assignments/<slug:{team_id}>/', views.AssignmentsView),
+    path(f'api/<slug:{company_id}>/assignments/<slug:{team_id}>/', views.AssignmentsView),
+
+    #Templates
+    path(f'api/<slug:{company_id}>/shift-templates/', views.ShiftTemplateView),
+    path(f'api/<slug:{company_id}>/shift-templates/<slug:{team_id}>/', views.ShiftTemplateView),
+    path(f'api/<slug:{company_id}>/shift-templates/<slug:{template_id}>/', views.ShiftTemplateView),
+
+    #Scheduling Algorithm
+    path(f'api/<slug:{company_id}>/algorithm/', views.AlgorithmView)
+
+
 ]
 
 urlpatterns = [] + auth_patterns

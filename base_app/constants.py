@@ -18,3 +18,5 @@ admin_scope = "admin"
 ''' Misc '''
 mongo_uri = "MONGO_URI"
 railway_pass = "RAILWAY_PASSWORD"
+shift_id = "ShiftID"
+template_id = "TemplateID"

@@ -9,7 +9,7 @@ from base_app.mongo.Models import Schedule, Shift
 from base_app.mongo.SchedulingAlgorithm.Strategies.Stratrgy import Strategy
 from .Strategies.HourStrategies.MaxHoursStrategy import Max_Hour_Daily_Strategy
 from .Strategies.HourStrategies.MaxHoursSchedule import Max_Hour_Schedule_Strategy
-from .Strategies.StrategyUtils import get_strategies, divide_strategies_by_role
+from .Strategies.StrategyUtils import get_strategies, divide_strategies_by_role, isIntersect
 
 
 # TODO: update maximum hours per day
@@ -75,11 +75,28 @@ def run(schedule_template, preferences_template_list, role_strategies, global_st
         employee_id = template.get("EmployeeID")
         for daily in template.get("Dailies"):
             date = daily.get("Date")
+            daily_keys = []
             for shift in daily.get("ShiftTypes"):
                 shift_copy, shift_str = get_shift_str(shift, "Answer")
+                answer = shift.get("Answer")
                 key = Tuple_Key(employee_id=employee_id, date=date, shift=shift_copy)
-                shifts[key] = model.NewBoolVar('shift_%s' % (shift_str))
-                keys.append(key)
+                if answer is True:
+                    shifts[key] = model.NewBoolVar('shift_%s' % (shift_str))
+                    keys.append(key)
+                    daily_keys.append(key)
+
+            """
+            Prevent overlapping of shifts
+            """
+
+            for i in range(len(daily_keys) -1):
+                for j in range(i+1, len(daily_keys)):
+                    key_i = daily_keys[i]
+                    key_j = daily_keys[j]
+                    if isIntersect(key1=key_i, key2=key_j):
+                        model.Add(shifts.get(key_i) + shifts.get(key_j) <= 1)
+
+            
 
     """
     Limit each shift with the maximal number of worker that defined for it
