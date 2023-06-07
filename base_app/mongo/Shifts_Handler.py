@@ -1,9 +1,9 @@
 import pymongo
 from bson import ObjectId
 
-from .Models.Schedule import Shift,Schedule
-from .Collection_Handler import CollectionHandler
-from .constants import *
+from base_app.mongo.Models.Schedule import Shift,Schedule
+from base_app.mongo.Collection_Handler import CollectionHandler
+from base_app.mongo.constants import *
 
 
 class Shifts_Handler(CollectionHandler):

@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
-from .constants import user_scope
+from base_app.constants import user_scope
 
 ''' USER '''
 
@@ -40,6 +40,7 @@ class CustomUser(AbstractUser):
     objects = CustomUserManager()
 
     USERNAME_FIELD = 'username'
+    EMAIL_FIELD    = 'username'
     REQUIRED_FIELDS = [] # important
 
 ''' auto-id by the ORM '''

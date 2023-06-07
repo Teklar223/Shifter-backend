@@ -1,15 +1,15 @@
 from django.http import JsonResponse
 from rest_framework.parsers import JSONParser
-from ..mongo.Shifts_Handler import Shifts_Handler, Shift, Schedule # Handler and models
-from ..mongo.WeeklyPref_Handler import WeeklyPrefHandler, DailyPref, WeeklyPref # Handler and models
-# from ..mongo.AssignmentsHandler import AssignmentsHandler
-from ..mongo.constants import *
-from ..constants import team_id, company_id, employee_id
-from ..mongo.constants import Shift_id, Employee_id, Team_id, Company_id, INPUT_SIGNATURE
-from ..mongo.Models.PostAssignment.AssignedWeek import AssignedWeek, AssignedEvent, AssignedDay
-from ..mongo.AssignmentsHandler import Assignment_Handler
-from ..mongo.SchedulingAlgorithm.Algorithm import schedule
-from ..mongo.ShiftTemplateHandler import Shift_Template_Handler, Shift_Template
+from base_app.mongo.Shifts_Handler import Shifts_Handler, Shift, Schedule # Handler and models
+from base_app.mongo.WeeklyPref_Handler import WeeklyPrefHandler, DailyPref, WeeklyPref # Handler and models
+# from base_app.mongo.AssignmentsHandler import AssignmentsHandler
+from base_app.mongo.constants import *
+from base_app.constants import team_id, company_id, employee_id
+from base_app.mongo.constants import Shift_id, Employee_id, Team_id, Company_id, INPUT_SIGNATURE
+from base_app.mongo.Models.PostAssignment.AssignedWeek import AssignedWeek, AssignedEvent, AssignedDay
+from base_app.mongo.AssignmentsHandler import Assignment_Handler
+from base_app.mongo.SchedulingAlgorithm.Algorithm import schedule
+from base_app.mongo.ShiftTemplateHandler import Shift_Template_Handler, Shift_Template
 ''' Shifts  '''
 
 def ShiftsGet(request, *args, **kwargs) -> JsonResponse:

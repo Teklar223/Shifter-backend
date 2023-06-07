@@ -1,8 +1,8 @@
 from bson import ObjectId
 
 from Collection_Handler import CollectionHandler
-from .Models.Task import Task
-from .constants import *
+from base_app.mongo.Models.Task import Task
+from base_app.mongo.constants import *
 
 
 class TasksHandler(CollectionHandler):

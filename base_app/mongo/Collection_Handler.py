@@ -1,4 +1,4 @@
-from .Connector import Connector
+from base_app.mongo.Connector import Connector
 
 class CollectionHandler:
     def __init__(self, collection_name):
