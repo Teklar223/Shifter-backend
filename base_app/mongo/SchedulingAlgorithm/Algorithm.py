@@ -7,16 +7,9 @@ from base_app.mongo.Models.PostAssignment.AssignedWeek import AssignedDay, Assig
 import json
 from base_app.mongo.Models import Schedule, Shift
 from base_app.mongo.SchedulingAlgorithm.Strategies.Stratrgy import Strategy
-<<<<<<< HEAD
 from base_app.mongo.SchedulingAlgorithm.Strategies.HourStrategies.MaxHoursStrategy import Max_Hour_Daily_Strategy
 from base_app.mongo.SchedulingAlgorithm.Strategies.HourStrategies.MaxHoursSchedule import Max_Hour_Schedule_Strategy
 from base_app.mongo.SchedulingAlgorithm.Strategies.StrategyUtils import get_strategies, divide_strategies_by_role, isIntersect
-=======
-from .Strategies.HourStrategies.MaxHoursStrategy import Max_Hour_Daily_Strategy
-from .Strategies.HourStrategies.MaxHoursSchedule import Max_Hour_Schedule_Strategy
-from .Strategies.StrategyUtils import get_strategies, divide_strategies_by_role, isIntersect
-
->>>>>>> 52e50f378f239d3dbc718fbca6d1a4a86f81f304
 
 # TODO: update maximum hours per day
 # Assuming that I get a dictionary from employee_id to role_id, seperate by roles and run the algorithm seperately
@@ -86,29 +79,6 @@ def run(schedule_template, preferences_template_list, role_strategies, global_st
                 shift_copy, shift_str = get_shift_str(shift, "Answer")
                 answer = shift.get("Answer")
                 key = Tuple_Key(employee_id=employee_id, date=date, shift=shift_copy)
-<<<<<<< HEAD
-                shifts[key] = model.NewBoolVar('shift_%s' % (shift_str))
-                keys.append(key)
-            employee_daily_keys = [x for x in list(filter(lambda obj: obj.get_date() == date and obj.get_employee_id() == employee_id, keys))]
-            
-            """
-            Use a constraint to prevent overlapping of shifts
-            S1 = (a, b)
-            S2 = (c,d)
-            overlapping = (a<c<b) or (a<d<b) or (c<a<d) or (c<b<d)
-            in that case we would like to allow only one shift at most to be assigned.
-            x1 the assignment of S1
-            X2 the assignment of S2
-            x1 + x2 <= 1
-            """
-            
-            for i in range(len(employee_daily_keys) - 1):
-                key_i = employee_daily_keys[i]
-                for j in range(i + 1, len(employee_daily_keys)):
-                    key_j = employee_daily_keys[j]
-                    if isIntersect(key_i, key_j):
-                        model.Add(shifts.get(key_i) + shifts.get(key_j) <= 1)
-=======
                 if answer is True:
                     shifts[key] = model.NewBoolVar('shift_%s' % (shift_str))
                     keys.append(key)
@@ -126,7 +96,6 @@ def run(schedule_template, preferences_template_list, role_strategies, global_st
                         model.Add(shifts.get(key_i) + shifts.get(key_j) <= 1)
 
             
->>>>>>> 52e50f378f239d3dbc718fbca6d1a4a86f81f304
 
     """
     Limit each shift with the maximal number of worker that defined for it
