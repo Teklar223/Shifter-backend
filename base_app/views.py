@@ -185,6 +185,30 @@ def AssignmentsView(request, *args, **kwargs):
         return AssignmentsPut(request, *args, **kwargs)
     if request.method == 'DELETE':
         return AssignmentsDelete(request, *args, **kwargs)
+    
+############# Shift Template Domain ##############
+
+@api_view(['GET', 'POST', 'PUT', 'DELETE'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def ShiftTemplateView(request, *args, **kwargs):
+    if request.method == 'GET':
+        return Shift_Templates_Get(request, *args, **kwargs)
+    if request.method == 'POST':
+        return Shift_Template_Post(request, *args, **kwargs)
+    if request.method == 'PUT':
+        return Shift_Template_Put(request, *args, **kwargs)
+    if request.method == 'DELETE':
+        return Shift_Template_Delete(request, *args, **kwargs)
+    
+########### Algorithm Domain ###############
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def AlgorithmView(request, *args, **kwargs):
+    if request.method == 'GET':
+        return SchedulingAlgorithmRun(request, *args, **kwargs)
 
 # ######### Task Domain ######### #
 

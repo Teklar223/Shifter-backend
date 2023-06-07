@@ -30,7 +30,7 @@ class Shift_Template_Handler(CollectionHandler):
         for doc in docs:
             template = Shift_Template.deserialize(doc)
             template_list.append(template)
-        return template
+        return template_list
     
     """
     Get a batch of templates
@@ -53,7 +53,7 @@ class Shift_Template_Handler(CollectionHandler):
         ]
         docs = self.collection.aggregate(pipeline=pipeline)
         for doc in docs:
-            templates.append(self.get_schedule_from_doc(doc))
+            templates.append(Shift_Template.deserialize(doc))
         return templates
     
     def update_template(self, shift_template: Shift_Template):

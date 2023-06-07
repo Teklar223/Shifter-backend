@@ -3,6 +3,20 @@ from base_app.mongo.SchedulingAlgorithm.Strategies.strategies_constants import *
 from base_app.mongo.SchedulingAlgorithm.Strategies.HourStrategies.MaxHoursSchedule import Max_Hour_Schedule_Strategy
 from base_app.mongo.SchedulingAlgorithm.Strategies.HourStrategies.MaxHoursStrategy import Max_Hour_Daily_Strategy
 
+def isIntersect(key1: Tuple_Key, key2:Tuple_Key):
+    if key1.get_employee_id() != key2.get_employee_id() or key1.get_date() != key2.get_date():
+        return False
+    key1_data = key1.get_data()
+    key2_data = key2.get_data()
+    start1 = key1_data.get("StartHour")
+    start2 = key2_data.get("StartHour")
+    end1 = key1_data.get("EndHour")
+    end2 = key2_data.get("EndHour")
+    if (start1 < start2 < end1) or (start1 < end2 < end1) or (start2 < start1 < end2) or (start2 < end1 < end2):
+        return True
+    return False
+
+
 def get_strategies(strategies_dict: dict, shift_keys):
     strategies = []
     for strategy, demands in strategies_dict.items():

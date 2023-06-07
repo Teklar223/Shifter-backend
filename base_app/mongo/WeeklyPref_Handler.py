@@ -46,8 +46,6 @@ class WeeklyPrefHandler(CollectionHandler):
                 "$set": {
                     "ShiftID": data["ShiftID"],
                     "Dailies": data["Dailies"],
-                    "StartDate": data["StartDate"],
-                    "EndDate": data["EndDate"]
                 }
             }
         )
@@ -60,29 +58,30 @@ class WeeklyPrefHandler(CollectionHandler):
             {
                 "$set": {
                     "Dailies": data["Dailies"],
+                    "ShiftID": data["ShiftID"]
                 }
             }
         )
 
     def get_wp_from_doc(self, doc):
-        employee_id = doc["EmployeeID"]
-        team_id = doc["TeamID"]
-        company_id = doc["CompanyID"]
-        shift_id = doc["ShiftID"]
+        employee_id = doc.get("EmployeeID")
+        team_id = doc.get("TeamID")
+        company_id = doc.get("CompanyID")
+        shift_id = doc.get("ShiftID")
         wp = WeeklyPref(employee_id=employee_id, team_id=team_id, company_id=company_id, shift_id=shift_id, dailies=[])
-        dailies = doc["Dailies"]
+        dailies = doc.get("Dailies")
         for daily in dailies:
-            date = daily["Date"]
+            date = daily.get("Date")
             shift_for_obj = []
-            shifts = daily["ShiftTypes"]
+            shifts = daily.get("ShiftTypes")
             for shift in shifts:
-                if shift["Answer"] is False:
+                if shift.get("Answer") is False:
                     continue
                 data = dict()
-                data["StartHour"] = shift["StartHour"]
-                data["EndHour"] = shift["EndHour"]
-                data["ShiftName"] = shift["ShiftName"]
-                data["Answer"] = shift["Answer"]
+                data["StartHour"] = shift.get("StartHour")
+                data["EndHour"] = shift.get("EndHour")
+                data["ShiftName"] = shift.get("ShiftName")
+                data["Answer"] = shift.get("Answer")
                 shift_for_obj.append(data)
             daily_pref = DailyPref(date=date, shift_types=shift_for_obj)
             wp.add_daily_preference(dailypref=daily_pref)
@@ -100,11 +99,12 @@ class WeeklyPrefHandler(CollectionHandler):
     def get_employee_preferences(self, employee_id):
         wpl = []
         query = {"EmployeeID": employee_id}
-        docs = self.collection.find(query, {})
-        for doc in docs:
-            wp = self.get_wp_from_doc(doc)
-            wpl.append(wp)
-        return wpl
+        doc = self.collection.find_one(query, {})
+        wp = self.get_wp_from_doc(doc=doc)
+        # for doc in docs:
+        #     wp = self.get_wp_from_doc(doc)
+        #     wpl.append(wp)
+        return wp
 
 
 # s = Shift(1, 1, 1, [{"ShiftName": "Evening", "StartHour": 1600, "EndHour": 2330, "NeededRoles":
