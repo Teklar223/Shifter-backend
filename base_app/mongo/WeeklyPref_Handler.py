@@ -52,7 +52,7 @@ class WeeklyPrefHandler(CollectionHandler):
     
     def update_employee_next_weekly_pref(self, employee_id, wp: WeeklyPref):
         data = wp.get_dict_format()
-        result = self.collection.update_many(
+        result = self.collection.update_one(
             {
                 "EmployeeID": {"$eq": employee_id}},
             {

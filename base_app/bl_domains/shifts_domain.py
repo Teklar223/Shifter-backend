@@ -1,7 +1,8 @@
 from django.http import JsonResponse
 from rest_framework.parsers import JSONParser
-from ..mongo.Shifts_Handler import Shifts_Handler, Shift, Schedule # Handler and models
-from ..mongo.WeeklyPref_Handler import WeeklyPrefHandler, DailyPref, WeeklyPref # Handler and models
+from ..mongo.Shifts_Handler import Shifts_Handler, Shift, Schedule  # Handler and models
+# Handler and models
+from ..mongo.WeeklyPref_Handler import WeeklyPrefHandler, DailyPref, WeeklyPref
 # from ..mongo.AssignmentsHandler import AssignmentsHandler
 from ..mongo.constants import *
 from ..constants import team_id, company_id, employee_id
@@ -14,6 +15,7 @@ from ..models import CustomUser
 from ..serializers import EmployeeSerializer
 import json
 ''' Shifts  '''
+
 
 def ShiftsGet(request, *args, **kwargs) -> JsonResponse:
     ''''
@@ -31,12 +33,14 @@ def ShiftsGet(request, *args, **kwargs) -> JsonResponse:
     # data = JSONParser().parse(request.body)
     # data = json.loads(data)
     if "ShiftID" in request.GET.keys():
-        handler : Shifts_Handler = Shifts_Handler()
-        schedule : Schedule = handler.get_schedule_by_shift_id(shift_id=request.GET.get(Shift_id))
+        handler: Shifts_Handler = Shifts_Handler()
+        schedule: Schedule = handler.get_schedule_by_shift_id(
+            shift_id=request.GET.get(Shift_id))
         return JsonResponse(schedule.get_dict_format(), safe=False)
     else:
         return JsonResponse("No team_id for ShiftsGet :(", safe=False)
-    
+
+
 """
 case 1:
 Create new shift
@@ -109,24 +113,37 @@ format example:
 }
 """
 
+
 def ShiftsPost(request, *args, **kwargs) -> JsonResponse:
     # if company_id in kwargs and team_id in kwargs:
     handler: Shifts_Handler = Shifts_Handler()
     # data = JSONParser().parse(request.body)
     data = json.loads(request.body)
     schedule = handler.get_schedule_from_doc(data)
-    handler.add_new_shift(schedule = schedule)
+    s_id = handler.add_new_shift(schedule=schedule)
+    schedule.shift_id = s_id
     return JsonResponse(status=201, data=schedule.get_dict_format())
     # else:
-        # pass
+    # pass
+
 
 def ShiftsPut(request, *args, **kwargs) -> JsonResponse:
     handler: Shifts_Handler = Shifts_Handler()
-    pass
+    data = json.loads(request.body)
+    schedule = handler.get_schedule_from_doc(data)
+    t_id = schedule.get_team_id()
+    handler.update_shift(schedule=schedule)
+    pref_handler = WeeklyPrefHandler()
+    wp = pref_handler.derive_preferences_from_schedule(
+        employee_id=-1, schedule=schedule)
+    pref_handler.prepare_team_next_weekly_pref(team_id=t_id, wp=wp)
+    return JsonResponse(data=schedule.get_dict_format(), safe=False, status=201)
+
 
 def ShiftsDelete(request, *args, **kwargs) -> JsonResponse:
     handler: Shifts_Handler = Shifts_Handler()
     pass
+
 
 ''' WeeklyPref  '''
 
@@ -146,22 +163,25 @@ format:
 }
 """
 
-def WeeklyPrefGet(request, *args, **kwargs) -> JsonResponse: # need to check
+
+def WeeklyPrefGet(request, *args, **kwargs) -> JsonResponse:  # need to check
     if employee_id in request.GET.keys():
-        handler : WeeklyPrefHandler = WeeklyPrefHandler()
+        handler: WeeklyPrefHandler = WeeklyPrefHandler()
         e_id = request.GET.get(employee_id)
         data = handler.get_employee_preferences(e_id)
         # if len(data) == 1: # will be 1 or 0
         return JsonResponse(data=data.get_dict_format(), safe=False, status=201)
         # else:
-            # return JsonResponse(safe=False, status=404)
+        # return JsonResponse(safe=False, status=404)
     elif team_id in request.GET.keys():
-        handler : WeeklyPrefHandler = WeeklyPrefHandler()
-        data = handler.get_team_preferences(team_id=int(request.GET.get(team_id)))
+        handler: WeeklyPrefHandler = WeeklyPrefHandler()
+        data = handler.get_team_preferences(
+            team_id=int(request.GET.get(team_id)))
         data_dict = [d.get_dict_format() for d in data]
         return JsonResponse(data=data_dict, safe=False, status=201)
     else:
         return JsonResponse(safe=False, status=404)
+
 
 """
 case 1:
@@ -174,15 +194,17 @@ format:
 the schedule should be the schedule of the next week.
 """
 
+
 def WeeklyPrefPost(request, *args, **kwargs) -> JsonResponse:
     # data = JSONParser().parse(request.body)
     data = json.loads(request.body)
     if employee_id in request.GET.keys():
-        shift_handler : Shifts_Handler = Shifts_Handler()
+        shift_handler: Shifts_Handler = Shifts_Handler()
         schedule = shift_handler.get_schedule_from_doc(data)
         e_id = request.GET.get(employee_id)
-        handler : WeeklyPrefHandler = WeeklyPrefHandler()
-        wp = handler.derive_preferences_from_schedule(employee_id=e_id, schedule=schedule, default_pref=False)
+        handler: WeeklyPrefHandler = WeeklyPrefHandler()
+        wp = handler.derive_preferences_from_schedule(
+            employee_id=e_id, schedule=schedule, default_pref=False)
         handler.add_first_pref(wp=wp)
         return JsonResponse(data=wp.get_dict_format(), safe=False, status=201)
 
@@ -191,7 +213,7 @@ def WeeklyPrefPost(request, *args, **kwargs) -> JsonResponse:
     #     handler.add_first_pref(wp=handler.get_wp_from_doc(doc=kwargs))
     else:
         pass
-        
+
         """
         case 1:
         This function will work if there is at least one document in Shifts and document for each
@@ -210,35 +232,37 @@ def WeeklyPrefPost(request, *args, **kwargs) -> JsonResponse:
         }
         """
 
+
 def WeeklyPrefPut(request, *args, **kwargs) -> JsonResponse:
     if team_id in request.GET.keys():
         t_id = int(request.GET.get(team_id))
-        shift_handler : Shifts_Handler = Shifts_Handler()
+        shift_handler: Shifts_Handler = Shifts_Handler()
         # data = JSONParser().parse(request.body)
         data = json.loads(request.body)
-        schedule_ : Schedule = shift_handler.get_schedule_from_doc(data)
-        handler : WeeklyPrefHandler = WeeklyPrefHandler()
+        schedule_: Schedule = shift_handler.get_schedule_from_doc(data)
+        handler: WeeklyPrefHandler = WeeklyPrefHandler()
         wp_list = handler.get_team_preferences(team_id=t_id)
         e_id = -1
         if len(wp_list) > 0:
             wp = wp_list[0]
             e_id = wp.get_employee_id()
-            new_wp = handler.derive_preferences_from_schedule(employee_id=e_id, schedule=schedule_)
+            new_wp = handler.derive_preferences_from_schedule(
+                employee_id=e_id, schedule=schedule_)
             handler.prepare_team_next_weekly_pref(team_id=t_id, wp=new_wp)
-            return JsonResponse(status=201, data = "Updated Successfully", safe=False)
+            return JsonResponse(status=201, data="Updated Successfully", safe=False)
     elif employee_id in request.GET.keys():
         e_id = request.GET.get(employee_id)
-        handler : WeeklyPrefHandler = WeeklyPrefHandler()
+        handler: WeeklyPrefHandler = WeeklyPrefHandler()
         # data = JSONParser().parse(request.body)
         data = json.loads(request.body)
-        wp : WeeklyPref = handler.get_wp_from_doc(data)
+        wp: WeeklyPref = handler.get_wp_from_doc(data)
         handler.update_employee_next_weekly_pref(employee_id=e_id, wp=wp)
         return JsonResponse(status=201, safe=False, data="Updated successfully!")
 
 
-
 def WeeklyPrefDelete(request, *args, **kwargs) -> JsonResponse:
     pass
+
 
 ''' Assignments  '''
 
@@ -248,27 +272,47 @@ case 2: get assignment by date
 case 3: get assignment by team(recent assignments)
 """
 
+
 def AssignmentsGet(request, *args, **kwargs) -> JsonResponse:
     if Shift_id in request.GET.keys():
-        handler : Assignment_Handler = Assignment_Handler()
-        assignment : AssignedWeek = handler.get_assignment_by_shift_id(request.GET.get(Shift_id))
+        handler: Assignment_Handler = Assignment_Handler()
+        assignment: AssignedWeek = handler.get_assignment_by_shift_id(
+            request.GET.get(Shift_id))
         return JsonResponse(data=assignment.get_dict_format(), safe=False)
         # TODO: merge with the algorithm branch to continue
     # elif date in kwargs:
     #     pass # TODO: implement the function first
     elif team_id in request.GET.keys():
         t_id = int(request.GET.get(team_id))
-        handler : Assignment_Handler = Assignment_Handler()
+        handler: Assignment_Handler = Assignment_Handler()
         # data = JSONParser().parse(request.body)
         data = json.loads(request.body)
         if "count" in data.keys():
             count = data.get("count")
             if isinstance(count, int) and count > 0:
-                data = handler.get_recent_assignments_by_team_id(team_id=t_id, count=count)
+                data = handler.get_recent_assignments_by_team_id(
+                    team_id=t_id, count=count)
             else:
                 data = handler.get_recent_assignments_by_team_id(team_id=t_id)
             data_dict = [d.get_dict_format() for d in data]
             return JsonResponse(data=data_dict, safe=False)
+        elif "Date" in data.keys():
+            date = int(data.get("Date"))
+            assignment = handler.get_dated_assignments_by_team_id(
+                team_id=t_id, date=date)
+            return JsonResponse(data=assignment.get_dict_format(), status=201, safe=False)
+        elif "RangedDates" in data.keys():
+            ranges = data.get("RangedDates")
+            if isinstance(ranges, dict):
+                start = None
+                end = None
+                if (ranges.get("StartDate") is not None) and (ranges.get("EndDate") is not None):
+                    start = int(ranges.get("StartDate"))
+                    end = int(ranges.get("EndDate"))
+                    assignments = handler.get_bounded_dated_assignments_by_team_id(
+                        team_id=t_id, start_date=start, end_date=end)
+                    output = [x.get_dict_format() for x in assignments]
+                    return JsonResponse(data=output, status=201, safe=False)
         else:
             data = handler.get_recent_assignments_by_team_id(team_id=t_id)
             data_dict = [d.get_dict_format() for d in data]
@@ -278,36 +322,41 @@ def AssignmentsGet(request, *args, **kwargs) -> JsonResponse:
 def AssignmentsPost(request, *args, **kwargs) -> JsonResponse:
     # data = JSONParser().parse(request.body)
     data = json.loads(request.body)
-    handler : Assignment_Handler = Assignment_Handler()
+    handler: Assignment_Handler = Assignment_Handler()
     assignment = AssignedWeek.dict_to_week_obj(data)
     handler.add_new_assignment(assignment=assignment)
     return JsonResponse(safe=False, status=201, data=assignment.get_dict_format())
 
+
 def AssignmentsPut(request, *args, **kwargs) -> JsonResponse:
     # data = JSONParser().parse(request.body)
     data = json.loads(request.body)
-    handler : Assignment_Handler = Assignment_Handler()
+    handler: Assignment_Handler = Assignment_Handler()
     assignment = AssignedWeek.dict_to_week_obj(data)
     handler.update_assignment(assignment=assignment)
     return JsonResponse(safe=False, status=201, data=assignment.get_dict_format())
 
+
 def AssignmentsDelete(request, *args, **kwargs) -> JsonResponse:
     pass
+
 
 """
 Needed inputs in kwargs: ShiftID
 Needed input in body: {"Strategy Inputs": {inputs dictionary of dictionaries}}
 """
 
+
 def SchedulingAlgorithmRun(request, *args, **kwargs) -> JsonResponse:
     data = json.loads(request.body)
     # data = json.loads(data)
     if Shift_id in data.keys():
         s_id = data.get(Shift_id)
-        shift_handler : Shifts_Handler = Shifts_Handler()
-        schedule = shift_handler.get_schedule_by_shift_id(shift_id=s_id)
-        t_id = schedule.get_team_id()
-        team_data = CustomUser.objects.get(team_id=t_id) # TODO: Check if its working
+        shift_handler: Shifts_Handler = Shifts_Handler()
+        schedule_ = shift_handler.get_schedule_by_shift_id(shift_id=s_id)
+        t_id = schedule_.get_team_id()
+        team_data = CustomUser.objects.filter(
+            team_id=t_id)  # TODO: Check if its working
         needed_data = EmployeeSerializer(team_data, many=True)
         team_data = needed_data.data
         print(team_data)
@@ -316,20 +365,21 @@ def SchedulingAlgorithmRun(request, *args, **kwargs) -> JsonResponse:
             employee_id = entry.get("username")
             role_id = entry.get("role_id")
             employees_roles[employee_id] = role_id
+        # return JsonResponse(data=employees_roles, safe=False)
         input_condition = None
         # data = JSONParser().parse(request.body)
         # data = json.loads(data)
         if INPUT_SIGNATURE in data:
             input_condition = data.get(INPUT_SIGNATURE)
-        output : AssignedWeek = schedule(Shift_id=s_id, employee_roles=employees_roles, strategies=input_condition)
+        output: AssignedWeek = schedule(
+            s_id, employee_roles=employees_roles, strategies=input_condition)
         output_data = output.get_dict_format()
         return JsonResponse(data=output_data, safe=False)
     else:
         return JsonResponse("No ShiftID for RunAlgo :(", safe=False)
 
-    
+    # Shift Template Domain
 
-    #################################### Shift Template Domain
 
 def Shift_Templates_Get(request, *args, **kwargs) -> JsonResponse:
     handler = Shift_Template_Handler()
@@ -340,39 +390,39 @@ def Shift_Templates_Get(request, *args, **kwargs) -> JsonResponse:
         if "Count" in data.keys() and "SkipCount" in data.keys():
             get_count = int(data["Count"])
             skip_count = int(data["SkipCount"])
-            output = handler.get_batch_by_team_id(team_id=t_id, skip_count=skip_count, count=get_count)
+            output = handler.get_batch_by_team_id(
+                team_id=t_id, skip_count=skip_count, count=get_count)
             output = [x.serialize() for x in output]
             return JsonResponse(data=output, safe=False, status=201)
         else:
             output = handler.get_all_by_team_id(team_id=t_id)
             output = [x.serialize() for x in output]
             return JsonResponse(data=output, safe=False, status=201)
-            
+
+
 def Shift_Template_Post(request, *args, **kwargs) -> JsonResponse:
-        handler = Shift_Template_Handler()
-        # data = JSONParser().parse(request.body)
-        data = json.loads(request.body)
-        template = Shift_Template.deserialize(data)
-        handler.add_new_shift_template(shift_template=template)
-        return JsonResponse(status=201, safe=False, data=template.serialize())
-    
+    handler = Shift_Template_Handler()
+    # data = JSONParser().parse(request.body)
+    data = json.loads(request.body)
+    template = Shift_Template.deserialize(data)
+    handler.add_new_shift_template(shift_template=template)
+    return JsonResponse(status=201, safe=False, data=template.serialize())
+
+
 def Shift_Template_Put(request, *args, **kwargs) -> JsonResponse:
-        handler = Shift_Template_Handler()
-        # data = JSONParser().parse(request.body)
-        data = json.loads(request.body)
-        template = Shift_Template.deserialize(data)
-        handler.update_template(shift_template=template)
-        return JSONParser(safe=False, data=template.serialize())
-    
+    handler = Shift_Template_Handler()
+    # data = JSONParser().parse(request.body)
+    data = json.loads(request.body)
+    template = Shift_Template.deserialize(data)
+    handler.update_template(shift_template=template)
+    return JsonResponse(safe=False, data=template.serialize(), status=201)
+
+
 def Shift_Template_Delete(request, *args, **kwargs) -> JsonResponse:
-        handler = Shift_Template_Handler()
-        if Template_id in request.GET.keys():
-            template_id = request.GET.get(Template_id)
-            handler.delete_template(template_id=template_id)
-            return JsonResponse(safe=False, status=201, data="Deleted Successfully")
-        else:
-            return JsonResponse(safe=False, status=404, data="Not deleted!")
-
-            
-
-            
+    handler = Shift_Template_Handler()
+    if Template_id in request.GET.keys():
+        t_id = request.GET.get(Template_id)
+        handler.delete_template(template_id=t_id)
+        return JsonResponse(safe=False, status=201, data="Deleted Successfully")
+    else:
+        return JsonResponse(safe=False, status=404, data="Not deleted!")

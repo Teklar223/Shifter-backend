@@ -63,7 +63,7 @@ class Shift_Template_Handler(CollectionHandler):
         end = shift_template.get_end_hour()
         needed_roles = shift_template.get_needed_roles()
         self.collection.find_one_and_update(
-            {Template_id: ObjectId(template_id)},
+            {Template_id: template_id},
             {"$set":
                  {f"{Template_id}": template_id, f"{Team_id}": team_id, f"{Start_hour}": start, f"{End_hour}": end,
                   f"{NeededRoles}": needed_roles}

@@ -42,7 +42,7 @@ task_patterns =[] # TODO
 shift_patterns = [
     #Shifts
     path(f'api/<slug:{company_id}>/shifts/', views.ShiftsView),
-    # path(f'api/<slug:{company_id}>/shifts/<slug:{team_id}>/', views.ShiftsView),
+    path(f'api/<slug:{company_id}>/shifts/<slug:{team_id}>/', views.ShiftsView),
     path(f'api/<slug:{company_id}>/shifts/<slug:{shift_id}>/', views.ShiftsView),
 
     #WeeklyPref

@@ -43,6 +43,8 @@ class Shifts_Handler(CollectionHandler):
                  {f"{Shift_id}": shift_id}
              }, upsert=True
         )
+        schedule.shift_id = shift_id
+        return schedule
 
     """
     Crud - Read
