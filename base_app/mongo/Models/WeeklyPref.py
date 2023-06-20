@@ -1,6 +1,5 @@
 from .DailyPref import DailyPref
 
-
 class WeeklyPref:
     def __init__(self, employee_id, team_id, shift_id, company_id, dailies: list):
         self.__employee_id = employee_id
@@ -26,6 +25,10 @@ class WeeklyPref:
 
     def add_daily_preference(self, dailypref: DailyPref):
         self.__dailies.append(dailypref)
+
+    def random_weekly_shifts(self):
+        for i in range(len(self.__dailies)):
+            self.__dailies[i].random_daily_shifts()
 
     def get_dict_format(self):
         output = {"EmployeeID": self.__employee_id, "TeamID": self.__team_id, "CompanyID": self.__company_id,

@@ -1,3 +1,6 @@
+import random
+
+
 class DailyPref:
     def __init__(self, date: int , shift_types: list, constraints=None):
         self.__date = date
@@ -8,6 +11,12 @@ class DailyPref:
 
     def get_date(self):
         return self.__date
+    
+    def random_daily_shifts(self):
+        for i in range(len(self.__shift_types)):
+            coin = random.randint(0, 9)
+            if coin <= 6:
+                self.__shift_types[i]["Answer"] = True
 
     def get_shift_types(self):
         return self.__shift_types
