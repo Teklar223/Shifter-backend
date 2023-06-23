@@ -12,12 +12,15 @@ class Shift_Template_Handler(CollectionHandler):
     def add_new_shift_template(self, shift_template: Shift_Template):
         template_dict = shift_template.serialize()
         template_id = str(self.collection.insert_one(template_dict).inserted_id)
+        template_dict["TemplateID"] = template_id
         doc = self.collection.find_one_and_update(
             {"_id": ObjectId(template_id)},
             {"$set":
                  {f"{Template_id}": template_id}
              }, upsert=True
         )
+        shift_template = Shift_Template.deserialize(template_dict=template_dict)
+        return shift_template
 
     """
     Get all of the templates
