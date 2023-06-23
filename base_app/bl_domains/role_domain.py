@@ -1,6 +1,6 @@
 from django.http import JsonResponse
 from rest_framework.parsers import JSONParser
-from base_app.constants import role_id, company_id, error_id
+from base_app.constants import role_id, company_id
 from base_app.models import Role, CompanyRoleRequisite
 from base_app.serializers import RoleSerializer, RoleRequisiteSerializer
 
@@ -8,11 +8,11 @@ from base_app.serializers import RoleSerializer, RoleRequisiteSerializer
 
 def RoleGet(request, *args, **kwargs) -> JsonResponse:
     if role_id in kwargs:
-        role = Role.objects.get(id = kwargs.get(role_id, error_id), company_id = kwargs.get(company_id, error_id))
+        role = Role.objects.get(id = kwargs.get(role_id), company_id = kwargs.get(company_id))
         serializer = RoleSerializer(role, many=False)
         return JsonResponse(serializer.data, safe=False)
     else:
-        role = Role.objects.all()
+        role = Role.objects.get(company_id = kwargs.get(company_id))
         serializer = RoleSerializer(role, many=True)
         return JsonResponse(serializer.data, safe=False)
 
