@@ -17,11 +17,6 @@ def TeamGet(request, *args, **kwargs) -> JsonResponse:
         serializer = TeamSerializer(team, many=True)
         return JsonResponse(serializer.data, safe=False)
     else:
-        ''''''
-        team = Team.objects.all()
-        serializer = TeamSerializer(team, many=True)
-        print(serializer.data)
-        ''''''
         team_ids = []
 
         try:
