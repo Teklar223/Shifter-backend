@@ -86,6 +86,55 @@ class Shifts_Handler(CollectionHandler):
             sc = self.get_schedule_from_doc(doc)
         return sc
     
+    def get_dated_shift_by_team_id(self, team_id, date):
+        '''
+        returns a Schedule object
+        '''
+        schedule = None
+        pipeline = [
+            {
+                "$match": {
+                    f"{Team_id}": team_id,
+                    "StartDate": {"$lte": date},
+                    "EndDate": {"$gte": date}
+                }
+            },
+            {
+                "$sort": {
+                    f"{Start_date}": pymongo.DESCENDING
+                }
+            },
+        ]
+        docs = self.collection.aggregate(pipeline=pipeline)
+        for doc in docs:
+            schedule = self.get_schedule_from_doc(doc)
+        return schedule
+    
+    def get_bounded_dated_shifts_by_team_id(self, team_id, start_date, end_date):
+        '''
+        returns a Schedule object
+        '''
+        schedules = []
+        pipeline = [
+            {
+                "$match": {
+                    f"{Team_id}": team_id,
+                    "StartDate": {"$gte": start_date},
+                    "EndDate": {"$lte": end_date}
+                }
+            },
+            {
+                "$sort": {
+                    f"{Start_date}": pymongo.DESCENDING
+                }
+            },
+        ]
+        docs = self.collection.aggregate(pipeline=pipeline)
+        for doc in docs:
+            schedules.append(self.get_schedule_from_doc(doc))
+        return schedules
+    
+
     """
     Crud - Update
     """
@@ -108,6 +157,8 @@ class Shifts_Handler(CollectionHandler):
                   f"{Daily_shifts}": shifts_register}
              }, upsert=True
         )
+
+    
 
     """
     Crud - Delete # TODO

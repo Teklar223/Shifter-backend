@@ -75,8 +75,8 @@ class WeeklyPrefHandler(CollectionHandler):
             shift_for_obj = []
             shifts = daily.get("ShiftTypes")
             for shift in shifts:
-                if shift.get("Answer") is False:
-                    continue
+                # if shift.get("Answer") is False:
+                #     continue
                 data = dict()
                 data["StartHour"] = shift.get("StartHour")
                 data["EndHour"] = shift.get("EndHour")
