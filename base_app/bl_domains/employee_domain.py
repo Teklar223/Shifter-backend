@@ -29,15 +29,6 @@ def EmployeeGet(request, *args, **kwargs) -> JsonResponse:
     data['team_ids'] = list(team_ids)
 
     return JsonResponse(data, safe=False)
-    # if employee_id in kwargs:
-    #     employee = Employee.objects.get(id = kwargs.get(employee_id))
-    #     serializer = EmployeeSerializer(employee, many=False)
-    #     return JsonResponse(serializer.data, safe=False)
-    # else:
-    #     print(request.user.company_id.pk)
-    #     employee = Employee.objects.all()
-    #     serializer = EmployeeSerializer(employee, many=True)
-    #     return JsonResponse(serializer.data, safe=False)
 
 def EmployeePost(request, *args, **kwargs) -> JsonResponse:
     data = JSONParser().parse(request)
@@ -45,6 +36,7 @@ def EmployeePost(request, *args, **kwargs) -> JsonResponse:
     if serializer.is_valid():
         user: Employee = serializer.save()
         user.set_password(data["password"])
+        user.save()
         return JsonResponse(serializer.data, status=201)
     return JsonResponse(serializer.errors, status=400)
 
