@@ -31,6 +31,26 @@ def ShiftsGet(request, *args, **kwargs) -> JsonResponse:
     # else:
     # data = JSONParser().parse(request.body)
     # data = json.loads(data)
+    if team_id in request.GET.keys():
+        data = json.loads(request.body)
+        handler = Shifts_Handler()
+        t_id = int(request.GET.get(team_id))
+        if "Date" in data.keys():
+            date = int(data.get("Date"))
+            schedule = handler.get_dated_shift_by_team_id(team_id=t_id, date=date)
+            return JsonResponse(data=schedule.get_dict_format(), safe=False, status=201)
+        elif "RangedDates" in data.keys():
+            ranges = data.get("RangedDates")
+            if isinstance(ranges, dict):
+                start = None
+                end = None
+                if (ranges.get("StartDate") is not None) and (ranges.get("EndDate") is not None):
+                    start = int(ranges.get("StartDate"))
+                    end = int(ranges.get("EndDate"))
+                    shifts = handler.get_bounded_dated_shifts_by_team_id(
+                        team_id=t_id, start_date=start, end_date=end)
+                    output = [x.get_dict_format() for x in shifts]
+                    return JsonResponse(data=output, status=201, safe=False)
     if "ShiftID" in request.GET.keys():
         handler: Shifts_Handler = Shifts_Handler()
         schedule: Schedule = handler.get_schedule_by_shift_id(
@@ -114,16 +134,12 @@ format example:
 
 
 def ShiftsPost(request, *args, **kwargs) -> JsonResponse:
-    # if company_id in kwargs and team_id in kwargs:
     handler: Shifts_Handler = Shifts_Handler()
-    # data = JSONParser().parse(request.body)
     data = json.loads(request.body)
     schedule = handler.get_schedule_from_doc(data)
-    s_id = handler.add_new_shift(schedule=schedule)
-    schedule.shift_id = s_id
-    return JsonResponse(status=201, data=schedule.get_dict_format())
-    # else:
-    # pass
+    schedule = handler.add_new_shift(schedule=schedule)
+    return JsonResponse(data=schedule.get_dict_format(), safe=False, status=201)
+
 
 
 def ShiftsPut(request, *args, **kwargs) -> JsonResponse:
@@ -404,8 +420,8 @@ def Shift_Template_Post(request, *args, **kwargs) -> JsonResponse:
     # data = JSONParser().parse(request.body)
     data = json.loads(request.body)
     template = Shift_Template.deserialize(data)
-    handler.add_new_shift_template(shift_template=template)
-    return JsonResponse(status=201, safe=False, data=template.serialize())
+    output = handler.add_new_shift_template(shift_template=template)
+    return JsonResponse(status=201, safe=False, data=output.serialize())
 
 
 def Shift_Template_Put(request, *args, **kwargs) -> JsonResponse:

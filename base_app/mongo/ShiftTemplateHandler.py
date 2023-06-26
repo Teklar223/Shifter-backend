@@ -12,12 +12,15 @@ class Shift_Template_Handler(CollectionHandler):
     def add_new_shift_template(self, shift_template: Shift_Template):
         template_dict = shift_template.serialize()
         template_id = str(self.collection.insert_one(template_dict).inserted_id)
+        template_dict["TemplateID"] = template_id
         doc = self.collection.find_one_and_update(
             {"_id": ObjectId(template_id)},
             {"$set":
                  {f"{Template_id}": template_id}
              }, upsert=True
         )
+        shift_template = Shift_Template.deserialize(template_dict=template_dict)
+        return shift_template
 
     """
     Get all of the templates
@@ -62,11 +65,12 @@ class Shift_Template_Handler(CollectionHandler):
         start = shift_template.get_start_hour()
         end = shift_template.get_end_hour()
         needed_roles = shift_template.get_needed_roles()
+        name = shift_template.get_template_name()
         self.collection.find_one_and_update(
             {Template_id: template_id},
             {"$set":
                  {f"{Template_id}": template_id, f"{Team_id}": team_id, f"{Start_hour}": start, f"{End_hour}": end,
-                  f"{NeededRoles}": needed_roles}
+                  f"{NeededRoles}": needed_roles, "TemplateName": name}
              }, upsert=True
         )
 
