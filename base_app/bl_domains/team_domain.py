@@ -10,6 +10,10 @@ import json
 # TODO : check for company_id validity as needed
 
 def TeamGet(request, *args, **kwargs) -> JsonResponse:        
+    if request.GET.get("all"):
+        role = Team.objects.all()
+        serializer = TeamSerializer(role, many=True)
+        return JsonResponse(serializer.data, safe=False)
     if team_id in kwargs:
         # Temporary way to get all the teams
         # TODO get by companyID

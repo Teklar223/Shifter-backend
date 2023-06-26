@@ -7,13 +7,21 @@ from base_app.serializers import RoleSerializer, RoleRequisiteSerializer
 ''' Role  '''
 
 def RoleGet(request, *args, **kwargs) -> JsonResponse:
+    if request.GET.get("all"):
+        role = Role.objects.all()
+        serializer = RoleSerializer(role, many=True)
+        return JsonResponse(serializer.data, safe=False)
     if role_id in kwargs:
-        role = Role.objects.get(id = kwargs.get(role_id), company_id = kwargs.get(company_id))
+        role = Role.objects.get(id = kwargs.get(role_id))
         serializer = RoleSerializer(role, many=False)
         return JsonResponse(serializer.data, safe=False)
     else:
-        role = Role.objects.get(company_id = kwargs.get(company_id))
-        serializer = RoleSerializer(role, many=True)
+        role = Role.objects.filter(company_id = kwargs.get(company_id))
+        serializer = None
+        try:
+            serializer = RoleSerializer(role, many=True)
+        except:
+            serializer = RoleSerializer(role)
         return JsonResponse(serializer.data, safe=False)
 
 def RolePost(request, *args, **kwargs) -> JsonResponse:
