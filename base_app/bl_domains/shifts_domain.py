@@ -148,10 +148,12 @@ def ShiftsPut(request, *args, **kwargs) -> JsonResponse:
     schedule = handler.get_schedule_from_doc(data)
     t_id = schedule.get_team_id()
     handler.update_shift(schedule=schedule)
-    pref_handler = WeeklyPrefHandler()
-    wp = pref_handler.derive_preferences_from_schedule(
-        employee_id=-1, schedule=schedule)
-    pref_handler.prepare_team_next_weekly_pref(team_id=t_id, wp=wp)
+    if data.get("DefaultAnswer") is not None:
+        answer = data.get("DefaultAnswer")
+        pref_handler = WeeklyPrefHandler()
+        wp = pref_handler.derive_preferences_from_schedule(
+            employee_id=-1, schedule=schedule, default_pref=answer)
+        pref_handler.prepare_team_next_weekly_pref(team_id=t_id, wp=wp)
     return JsonResponse(data=schedule.get_dict_format(), safe=False, status=201)
 
 
