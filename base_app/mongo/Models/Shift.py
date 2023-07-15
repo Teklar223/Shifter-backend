@@ -21,4 +21,17 @@ class Shift:
         s_dict = {"Date": self.date, "StartHour": self.start_hour, "EndHour": self.end_hour,
                   "PossibleShifts": self.available}
         return s_dict
+    
+    def parse_to_int(self):
+        for i in range(len(self.available)):
+            start = self.available[i].get("StartHour")
+            end = self.available[i].get("EndHour")
+            self.available[i]["StartHour"] = int(start)
+            self.available[i]["StartHour"] = int(end)
+            for j in range(len(self.available[i].get("NeededRoles"))):
+                role = self.available[i].get("NeededRoles")[j].get("RoleID")
+                needed = self.available[i].get("NeededRoles")[j].get("NeededWorkers")
+                self.available[i]["NeededRoles"][j]["RoleID"] = int(role)
+                self.available[i]["NeededRoles"][j]["RoleID"] = int(needed)
+
 

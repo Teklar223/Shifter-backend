@@ -44,6 +44,7 @@ class Schedule:
         return s_dict
 
     def add_daily_shift(self, shift: Shift):
+        shift.parse_to_int()
         self.daily_shifts.append(shift)
 
 

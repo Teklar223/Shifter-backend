@@ -16,15 +16,15 @@ class Shifts_Handler(CollectionHandler):
 
     def get_schedule_from_doc(self, doc):
         shift_id = doc[Shift_id]
-        team_id = doc[Team_id]
-        company_id = doc[Company_id]
-        start_date = doc[Start_date]
-        end_date = doc[End_date]
+        team_id =  int(doc[Team_id])
+        company_id = int(doc[Company_id])
+        start_date = int(doc[Start_date])
+        end_date = int(doc[End_date])
         sc = Schedule(company_id=company_id, team_id=team_id, startdate=start_date, enddate=end_date, shift_id=shift_id)
         for data in doc[Daily_shifts]:
-            date = data[Date]
-            start_hour = data[Start_hour]
-            end_hour = data[End_hour]
+            date = int(data[Date])
+            start_hour = int(data[Start_hour])
+            end_hour = int(data[End_hour])
             possible_shifts = data[Possible_shifts]
             daily = Shift(date=date, starthour=start_hour, endhour=end_hour, possible_shifts=possible_shifts)
             sc.add_daily_shift(daily)
