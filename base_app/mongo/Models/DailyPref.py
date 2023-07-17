@@ -7,6 +7,21 @@ class DailyPref:
         # Format: list of {"ShiftType": "Morning", "StartHour": starthour, "EndHour": endhour, "Answer": answer
         self.__shift_types = shift_types
         self.__constraints = constraints
+        self.__parse_shift_types()
+
+
+    def __parse_shift_types(self):
+        for i in range(len(self.__shift_types)):
+            self.__shift_types[i]["StartHour"] = int(self.__shift_types[i].get("StartHour"))
+            self.__shift_types[i]["StartHour"] = int(self.__shift_types[i].get("EndHour"))
+            answer = self.__shift_types[i].get("Answer")
+            if answer == "true".lower:
+                answer = True
+            else:
+                answer = False
+            self.__shift_types[i]["Answer"] = answer
+
+
 
 
     def get_date(self):
