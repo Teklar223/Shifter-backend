@@ -49,6 +49,8 @@ shift_patterns = [
     path(f'api/<slug:{company_id}>/weeklypref/', views.WeeklyPrefView),
     path(f'api/<slug:{company_id}>/weeklypref/<slug:{employee_id}>/', views.WeeklyPrefView),
     path(f'api/<slug:{company_id}>/weeklypref/<slug:{team_id}>/', views.WeeklyPrefView),
+    path(f'api/<slug:{company_id}>/weeklypref/<slug:{team_id}>/<slug:{employee_id}>/', views.WeeklyPrefView),
+
 
     #Assignments
     path(f'api/<slug:{company_id}>/assignments/', views.AssignmentsView),
