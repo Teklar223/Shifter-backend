@@ -108,10 +108,10 @@ class AssignedWeek:
     @classmethod
     def dict_to_week_obj(self, week_dict):
         shift_id = week_dict["ShiftID"]
-        team_id = week_dict["TeamID"]
-        company_id = week_dict["CompanyID"]
-        start_date = week_dict["StartDate"]
-        end_date = week_dict["EndDate"]
+        team_id = int(week_dict["TeamID"])
+        company_id = int(week_dict["CompanyID"])
+        start_date = int(week_dict["StartDate"])
+        end_date = int(week_dict["EndDate"])
         week_assignment = AssignedWeek(start_date=start_date, end_date=end_date, shift_id=shift_id, team_id=team_id,
                                        company_id=company_id)
         for day_dict in week_dict["Dailies"]:

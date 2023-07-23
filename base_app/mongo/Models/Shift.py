@@ -27,7 +27,7 @@ class Shift:
             start = self.available[i].get("StartHour")
             end = self.available[i].get("EndHour")
             self.available[i]["StartHour"] = int(start)
-            self.available[i]["StartHour"] = int(end)
+            self.available[i]["EndHour"] = int(end)
             j = 0
             while j < len(self.available[i].get("NeededRoles")):
                 role = int(self.available[i].get("NeededRoles")[j].get("RoleID"))

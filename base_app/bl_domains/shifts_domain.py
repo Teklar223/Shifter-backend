@@ -13,6 +13,19 @@ from base_app.mongo.ShiftTemplateHandler import Shift_Template_Handler, Shift_Te
 from base_app.models import CustomUser
 from base_app.serializers import EmployeeSerializer
 import json
+
+'''
+Utilities
+'''
+
+def str_to_boolean(string: str):
+    if string.lower() == "true":
+        return True
+    elif string.lower() == "false":
+        return False
+    else:
+        return None
+
 ''' Shifts  '''
 
 
@@ -151,9 +164,19 @@ def ShiftsPut(request, *args, **kwargs) -> JsonResponse:
     if data.get("DefaultAnswer") is not None:
         answer = data.get("DefaultAnswer")
         pref_handler = WeeklyPrefHandler()
-        wp = pref_handler.derive_preferences_from_schedule(
-            employee_id=-1, schedule=schedule, default_pref=answer)
-        pref_handler.prepare_team_next_weekly_pref(team_id=t_id, wp=wp)
+
+        # update the weekly preferences of the employees
+
+        team_data = CustomUser.objects.filter(
+            team_id=t_id)
+        needed_data = EmployeeSerializer(team_data, many=True)
+        team_data = needed_data.data
+        for entry in team_data:
+            employee_id = entry.get("username")
+            role_id = entry.get("role_id")
+            wp = pref_handler.derive_preferences_from_schedule(
+                employee_id=employee_id, role_id=role_id, schedule=schedule, default_pref=answer)
+            pref_handler.update_employee_next_weekly_pref(employee_id=employee_id, wp=wp)
     return JsonResponse(data=schedule.get_dict_format(), safe=False, status=201)
 
 
@@ -182,20 +205,21 @@ format:
 
 
 def WeeklyPrefGet(request, *args, **kwargs) -> JsonResponse:  # need to check
-    if employee_id in request.GET.keys():
-        handler: WeeklyPrefHandler = WeeklyPrefHandler()
-        e_id = request.GET.get(employee_id)
-        data = handler.get_employee_preferences(e_id)
-        # if len(data) == 1: # will be 1 or 0
-        return JsonResponse(data=data.get_dict_format(), safe=False, status=201)
         # else:
         # return JsonResponse(safe=False, status=404)
-    elif team_id in request.GET.keys():
-        handler: WeeklyPrefHandler = WeeklyPrefHandler()
-        data = handler.get_team_preferences(
-            team_id=int(request.GET.get(team_id)))
-        data_dict = [d.get_dict_format() for d in data]
-        return JsonResponse(data=data_dict, safe=False, status=201)
+    if team_id in request.GET.keys():
+        if employee_id in request.GET.keys():
+            handler: WeeklyPrefHandler = WeeklyPrefHandler()
+            e_id = request.GET.get(employee_id)
+            data = handler.get_employee_preferences(e_id)
+            # if len(data) == 1: # will be 1 or 0
+            return JsonResponse(data=data.get_dict_format(), safe=False, status=201)
+        else:
+            handler: WeeklyPrefHandler = WeeklyPrefHandler()
+            data = handler.get_team_preferences(
+                team_id=int(request.GET.get(team_id)))
+            data_dict = [d.get_dict_format() for d in data]
+            return JsonResponse(data=data_dict, safe=False, status=201)
     else:
         return JsonResponse(safe=False, status=404)
 
@@ -219,9 +243,15 @@ def WeeklyPrefPost(request, *args, **kwargs) -> JsonResponse:
         shift_handler: Shifts_Handler = Shifts_Handler()
         schedule = shift_handler.get_schedule_from_doc(data)
         e_id = request.GET.get(employee_id)
+        employee_data = CustomUser.objects.filter(
+            username=e_id).first()
+        needed_data = EmployeeSerializer(employee_data)
+        employee_data = needed_data.data
+        print(employee_data)
+        role_id = employee_data.get('role_id')
         handler: WeeklyPrefHandler = WeeklyPrefHandler()
         wp = handler.derive_preferences_from_schedule(
-            employee_id=e_id, schedule=schedule, default_pref=False)
+            employee_id=e_id, role_id=role_id , schedule=schedule, default_pref=False)
         handler.add_first_pref(wp=wp)
         return JsonResponse(data=wp.get_dict_format(), safe=False, status=201)
 
@@ -251,30 +281,65 @@ def WeeklyPrefPost(request, *args, **kwargs) -> JsonResponse:
 
 
 def WeeklyPrefPut(request, *args, **kwargs) -> JsonResponse:
+
+    # if the manager want to update the preferences after he published it
+
     if team_id in request.GET.keys():
-        t_id = int(request.GET.get(team_id))
-        shift_handler: Shifts_Handler = Shifts_Handler()
-        # data = JSONParser().parse(request.body)
-        data = json.loads(request.body)
-        schedule_: Schedule = shift_handler.get_schedule_from_doc(data)
-        handler: WeeklyPrefHandler = WeeklyPrefHandler()
-        wp_list = handler.get_team_preferences(team_id=t_id)
-        e_id = -1
-        if len(wp_list) > 0:
-            wp = wp_list[0]
-            e_id = wp.get_employee_id()
-            new_wp = handler.derive_preferences_from_schedule(
-                employee_id=e_id, schedule=schedule_)
-            handler.prepare_team_next_weekly_pref(team_id=t_id, wp=new_wp)
-            return JsonResponse(status=201, data="Updated Successfully", safe=False)
-    elif employee_id in request.GET.keys():
-        e_id = request.GET.get(employee_id)
-        handler: WeeklyPrefHandler = WeeklyPrefHandler()
-        # data = JSONParser().parse(request.body)
-        data = json.loads(request.body)
-        wp: WeeklyPref = handler.get_wp_from_doc(data)
-        handler.update_employee_next_weekly_pref(employee_id=e_id, wp=wp)
-        return JsonResponse(status=201, safe=False, data="Updated successfully!")
+        if employee_id in request.GET.keys():
+            e_id = request.GET.get(employee_id)
+            handler: WeeklyPrefHandler = WeeklyPrefHandler()
+            # data = JSONParser().parse(request.body)
+            data = json.loads(request.body)
+            wp: WeeklyPref = handler.get_wp_from_doc(data)
+            handler.update_employee_next_weekly_pref(employee_id=e_id, wp=wp)
+            return JsonResponse(status=201, safe=False, data="Updated successfully!")
+        else:
+            t_id = int(request.GET.get(team_id))
+            shift_handler: Shifts_Handler = Shifts_Handler()
+            data = json.loads(request.body)
+            answer = data.get("DefaultAnswer")
+            if answer is None:
+                return JsonResponse(data="DefaultAnswer is not found", status=404, safe=False)
+            answer = str_to_boolean(answer)
+            if answer is None:
+                return JsonResponse(data="DefaultAnswer should be true or false as strings.", status=404, safe=False)
+            schedule_: Schedule = shift_handler.get_schedule_from_doc(data)
+            handler: WeeklyPrefHandler = WeeklyPrefHandler()
+
+            # update the weekly preferences of the employees
+
+            team_data = CustomUser.objects.filter(
+                team_id=t_id)
+            needed_data = EmployeeSerializer(team_data, many=True)
+            team_data = needed_data.data
+            # return JsonResponse(data=team_data, status=201, safe=False)
+            wp_list = []
+            # ret = []
+            for entry in team_data:
+                employee = entry.get("username")
+                role = entry.get("role_id")
+                # ret.append({Employee_id: employee_id, "RoleID": role})
+                wp = handler.derive_preferences_from_schedule(
+                    employee_id=employee_id, role_id=role, schedule=schedule_, default_pref=answer)
+                handler.update_employee_next_weekly_pref(employee_id=employee, wp=wp)
+                wp_list.append(wp)
+            # return JsonResponse(data=ret, status=201, safe=False)
+            wp_list = [wp.get_dict_format() for wp in wp_list]
+            return JsonResponse(data=wp_list, status=201, safe=False)
+        
+        # wp_list = handler.get_team_preferences(team_id=t_id)
+        # e_id = -1
+        # if len(wp_list) > 0:
+        #     wp = wp_list[0]
+        #     e_id = wp.get_employee_id()
+        #     new_wp = handler.derive_preferences_from_schedule(
+        #         employee_id=e_id, schedule=schedule_)
+        #     handler.prepare_team_next_weekly_pref(team_id=t_id, wp=new_wp)
+        #     return JsonResponse(status=201, data="Updated Successfully", safe=False)
+
+    # if an employee want to update his preferences
+
+    
 
 
 def WeeklyPrefDelete(request, *args, **kwargs) -> JsonResponse:
@@ -391,6 +456,8 @@ def SchedulingAlgorithmRun(request, *args, **kwargs) -> JsonResponse:
         output: AssignedWeek = schedule(
             s_id, employee_roles=employees_roles, strategies=input_condition)
         output_data = output.get_dict_format()
+        assignment_handler : Assignment_Handler = Assignment_Handler()
+        assignment_handler.add_new_assignment(output)
         return JsonResponse(data=output_data, safe=False)
     else:
         return JsonResponse("No ShiftID for RunAlgo :(", safe=False)

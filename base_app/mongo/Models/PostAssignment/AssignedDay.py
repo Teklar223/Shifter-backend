@@ -71,9 +71,9 @@ class AssignedDay:
     # Static Metods
     @classmethod
     def dict_to_day_object(self, dict_obj: dict):
-        start_hour = dict_obj["StartHour"]
-        end_hour = dict_obj["EndHour"]
-        date = dict_obj["Date"]
+        start_hour = int(dict_obj["StartHour"])
+        end_hour = int(dict_obj["EndHour"])
+        date = int(dict_obj["Date"])
         day = AssignedDay(date=date, start_hour=start_hour, end_hour=end_hour)
         for event_dict in dict_obj["Shifts"]:
             event = AssignedEvent.dict_to_event_obj(event_dict)

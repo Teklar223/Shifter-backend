@@ -36,7 +36,7 @@ class AssignedEvent:
     # Static Functions
     @classmethod
     def dict_to_event_obj(self, dict_obj: dict):
-        start_hour = dict_obj["StartHour"]
-        end_hour = dict_obj["EndHour"]
+        start_hour = int(dict_obj["StartHour"])
+        end_hour = int(dict_obj["EndHour"])
         employee_id = dict_obj[Employee_id]
         return AssignedEvent(start_hour=start_hour, end_hour=end_hour, employee_id=employee_id)
