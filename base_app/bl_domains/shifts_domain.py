@@ -150,8 +150,38 @@ def ShiftsPost(request, *args, **kwargs) -> JsonResponse:
     handler: Shifts_Handler = Shifts_Handler()
     data = json.loads(request.body)
     schedule = handler.get_schedule_from_doc(data)
-    schedule = handler.add_new_shift(schedule=schedule)
-    return JsonResponse(data=schedule.get_dict_format(), safe=False, status=201)
+    s_id = handler.check_if_exist(schedule=schedule)
+    if schedule.get_shift_id is None:
+        if s_id is None:
+            schedule = handler.add_new_shift(schedule=schedule)
+            return JsonResponse(data=schedule.get_dict_format(), safe=False, status=201)
+        else:
+            s_id2 = s_id.get_shift_id()
+            schedule.shift_id = s_id2
+            handler.update_shift(schedule=schedule)
+            return JsonResponse(data=schedule.get_dict_format(), safe=False, status=201)
+    else:
+        t_id = schedule.get_team_id()
+        schedule.shift_id = s_id.get_shift_id()
+        handler.update_shift(schedule=schedule)
+        if data.get("DefaultAnswer") is not None:
+            answer = data.get("DefaultAnswer")
+            pref_handler = WeeklyPrefHandler()
+
+            # update the weekly preferences of the employees
+
+            team_data = CustomUser.objects.filter(
+                team_id=t_id)
+            needed_data = EmployeeSerializer(team_data, many=True)
+            team_data = needed_data.data
+            for entry in team_data:
+                employee_id = entry.get("username")
+                role_id = entry.get("role_id")
+                wp = pref_handler.derive_preferences_from_schedule(
+                    employee_id=employee_id, role_id=role_id, schedule=schedule, default_pref=answer)
+                return JsonResponse(data = wp.get_dict_format(), safe=False)
+                pref_handler.update_employee_next_weekly_pref(employee_id=employee_id, wp=wp)
+        return JsonResponse(data=schedule.get_dict_format(), safe=False, status=201)
 
 
 
