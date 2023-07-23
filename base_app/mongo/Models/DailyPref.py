@@ -15,11 +15,15 @@ class DailyPref:
             self.__shift_types[i]["StartHour"] = int(self.__shift_types[i].get("StartHour"))
             self.__shift_types[i]["StartHour"] = int(self.__shift_types[i].get("EndHour"))
             answer = self.__shift_types[i].get("Answer")
-            if answer == "true".lower:
-                answer = True
+            if isinstance(answer, str):
+                if "true" == answer.lower():
+                    answer = True
+                else:
+                    answer = False
+            elif isinstance(answer, bool):
+                self.__shift_types[i]["Answer"] = answer
             else:
-                answer = False
-            self.__shift_types[i]["Answer"] = answer
+                self.__shift_types[i]["Answer"] = True
 
 
 
