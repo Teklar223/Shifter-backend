@@ -9,7 +9,6 @@ from base_app.serializers import EmployeeSerializer, EmployeeSuperiorSerializer,
 def EmployeeGet(request, *args, **kwargs) -> JsonResponse:
     '''
     Employee = CustomerUser
-    expects company_id and employee_id in kwargs, and superior_id in query
     '''
     employee = request.user
     serializer = EmployeeSerializer(employee, many=False)

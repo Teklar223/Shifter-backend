@@ -34,6 +34,7 @@ class CustomUser(AbstractUser):
     # is_active  (inherited)
     permission_scope = models.CharField(max_length=10, default=user_scope)
     is_admin = models.BooleanField(default=False)
+    color = models.CharField(max_length=100,default="0x00000000")
     # TODO: Add image API   
 
 
