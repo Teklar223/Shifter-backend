@@ -11,7 +11,8 @@ import json
 
 def TeamGet(request, *args, **kwargs) -> JsonResponse:        
     if request.GET.get("all"):
-        role = Team.objects.all()
+        print(kwargs)
+        role = Team.objects.filter(company_id=kwargs["company_id"])
         serializer = TeamSerializer(role, many=True)
         return JsonResponse(serializer.data, safe=False)
     if team_id in kwargs:
