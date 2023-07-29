@@ -158,6 +158,16 @@ class Shifts_Handler(CollectionHandler):
              }, upsert=True
         )
 
+    def check_if_exist(self, schedule: Schedule):
+        t_id = schedule.get_team_id()
+        start = schedule.get_start_date()
+        end = schedule.get_end_date()
+        outputs = self.get_bounded_dated_shifts_by_team_id(team_id=t_id, start_date=start, end_date=end)
+        if len(outputs) > 0:
+            return outputs[0]
+        else:
+            return None
+
     
 
     """
