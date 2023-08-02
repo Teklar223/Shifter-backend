@@ -144,8 +144,8 @@ class Dev(Base):
             'NAME': 'railway',
             'USER': 'postgres',
             'PASSWORD': os.environ.get(railway_pass),
-            'HOST': 'containers-us-west-25.railway.app',
-            'PORT': '7447',
+            'HOST': 'containers-us-west-75.railway.app',
+            'PORT': '7102',
         }
     }
 
