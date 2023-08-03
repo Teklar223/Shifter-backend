@@ -151,7 +151,7 @@ def ShiftsPost(request, *args, **kwargs) -> JsonResponse:
     data = json.loads(request.body)
     schedule = handler.get_schedule_from_doc(data)
     s_id = handler.check_if_exist(schedule=schedule)
-    if schedule.get_shift_id is None:
+    if schedule.get_shift_id() is None:
         if s_id is None:
             schedule = handler.add_new_shift(schedule=schedule)
             return JsonResponse(data=schedule.get_dict_format(), safe=False, status=201)
