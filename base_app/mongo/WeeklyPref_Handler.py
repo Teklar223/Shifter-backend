@@ -73,11 +73,11 @@ class WeeklyPrefHandler(CollectionHandler):
             self.add_first_pref(wp=wp)
 
     def get_wp_from_doc(self, doc):
-        employee_id = doc.get("EmployeeID")
-        team_id = int(doc.get("TeamID"))
-        company_id = int(doc.get("CompanyID"))
-        shift_id = doc.get("ShiftID")
-        wp = WeeklyPref(employee_id=employee_id, team_id=team_id, company_id=company_id, shift_id=shift_id, dailies=[])
+        e_id = doc.get("EmployeeID")
+        t_id = int(doc.get("TeamID"))
+        c_id = int(doc.get("CompanyID"))
+        s_id = doc.get("ShiftID")
+        wp = WeeklyPref(employee_id=e_id, team_id=t_id, company_id=c_id, shift_id=s_id, dailies=[])
         dailies = doc.get("Dailies")
         for daily in dailies:
             date = int(daily.get("Date"))
