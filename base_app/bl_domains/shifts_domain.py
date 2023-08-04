@@ -175,12 +175,12 @@ def ShiftsPost(request, *args, **kwargs) -> JsonResponse:
             needed_data = EmployeeSerializer(team_data, many=True)
             team_data = needed_data.data
             for entry in team_data:
-                employee_id = entry.get("username")
+                e_id = entry.get("username")
                 role_id = entry.get("role_id")
                 wp = pref_handler.derive_preferences_from_schedule(
-                    employee_id=employee_id, role_id=role_id, schedule=schedule, default_pref=answer)
-                return JsonResponse(data = wp.get_dict_format(), safe=False)
-                pref_handler.update_employee_next_weekly_pref(employee_id=employee_id, wp=wp)
+                    employee_id=e_id, role_id=role_id, schedule=schedule, default_pref=answer)
+                # return JsonResponse(data = wp.get_dict_format(), safe=False)
+                pref_handler.update_employee_next_weekly_pref(employee_id=e_id, wp=wp)
         return JsonResponse(data=schedule.get_dict_format(), safe=False, status=201)
 
 

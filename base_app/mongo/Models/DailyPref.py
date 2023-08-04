@@ -13,7 +13,7 @@ class DailyPref:
     def __parse_shift_types(self):
         for i in range(len(self.__shift_types)):
             self.__shift_types[i]["StartHour"] = int(self.__shift_types[i].get("StartHour"))
-            self.__shift_types[i]["StartHour"] = int(self.__shift_types[i].get("EndHour"))
+            self.__shift_types[i]["EndHour"] = int(self.__shift_types[i].get("EndHour"))
             answer = self.__shift_types[i].get("Answer")
             if isinstance(answer, str):
                 if "true" == answer.lower():
@@ -24,9 +24,6 @@ class DailyPref:
                 self.__shift_types[i]["Answer"] = answer
             else:
                 self.__shift_types[i]["Answer"] = True
-
-
-
 
     def get_date(self):
         return self.__date
