@@ -154,6 +154,22 @@ def ShiftsPost(request, *args, **kwargs) -> JsonResponse:
     if schedule.get_shift_id() is None:
         if s_id is None:
             schedule = handler.add_new_shift(schedule=schedule)
+            if data.get("DefaultAnswer") is not None:
+                answer = data.get("DefaultAnswer")
+                pref_handler = WeeklyPrefHandler()
+
+                # update the weekly preferences of the employees
+
+                team_data = CustomUser.objects.filter(team_id=t_id)
+                needed_data = EmployeeSerializer(team_data, many=True)
+                team_data = needed_data.data
+                for entry in team_data:
+                    e_id = entry.get("username")
+                    role_id = entry.get("role_id")
+                    wp = pref_handler.derive_preferences_from_schedule(
+                        employee_id=e_id, role_id=role_id, schedule=schedule, default_pref=answer)
+                    # return JsonResponse(data = wp.get_dict_format(), safe=False)
+                    pref_handler.update_employee_next_weekly_pref(employee_id=e_id, wp=wp)
             return JsonResponse(data=schedule.get_dict_format(), safe=False, status=201)
         else:
             s_id2 = s_id.get_shift_id()
