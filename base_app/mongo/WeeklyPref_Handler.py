@@ -59,17 +59,23 @@ class WeeklyPrefHandler(CollectionHandler):
     
     def update_employee_next_weekly_pref(self, employee_id, wp: WeeklyPref):
         data = wp.get_dict_format()
-        result = self.collection.update_one(
-            {
-                "EmployeeID": {"$eq": employee_id}},
-            {
+        query = {
+                "EmployeeID": {"$eq": employee_id}
+                # "EmployeeID": employee_id
+        }
+        to_update = {
                 "$set": {
                     "Dailies": data["Dailies"],
-                    "ShiftID": data["ShiftID"]
+                    "ShiftID": data["ShiftID"],
+                    "TeamID": data["TeamID"],
+                    "CompanyID": data["CompanyID"],
+                    "EmployeeID": data["EmployeeID"]
                 }
             }
-        ).modified_count
-        if result == 0:
+        result = self.collection.find_one_and_update(query, to_update)
+        # print("\n\n\n\n\n result\n\n\n\n\n\n")
+        if result == None:
+            print("\n\n\n\n\\n\n\nn HEREEEEEEEEEEEEEn\n\n\\n\n\n\n\n\n")
             self.add_first_pref(wp=wp)
 
     def get_wp_from_doc(self, doc):
