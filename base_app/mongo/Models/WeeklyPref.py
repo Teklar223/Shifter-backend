@@ -1,12 +1,20 @@
 from .DailyPref import DailyPref
 
 class WeeklyPref:
-    def __init__(self, employee_id, team_id, shift_id, company_id, dailies: list):
+    def __init__(self, employee_id, team_id, shift_id, company_id, start_date, end_date, dailies: list):
         self.__employee_id = employee_id
         self.__team_id = team_id
         self.__company_id = company_id
         self.__shift_id = shift_id
+        self.__start_date = start_date
+        self.__end_date = end_date
         self.__dailies = dailies
+
+    def get_start_date(self):
+        return self.__start_date
+    
+    def get_end_date(self):
+        return self.__end_date
 
     def get_employee_id(self):
         return self.__employee_id
@@ -32,7 +40,7 @@ class WeeklyPref:
 
     def get_dict_format(self):
         output = {"EmployeeID": self.__employee_id, "TeamID": self.__team_id, "CompanyID": self.__company_id,
-                  "ShiftID": self.__shift_id, "Dailies": []}
+                  "ShiftID": self.__shift_id, "StartDate": self.__start_date, "EndDate": self.__end_date,  "Dailies": []}
         for daily in self.__dailies:
             output["Dailies"].append(daily.get_dict_format())
         return output

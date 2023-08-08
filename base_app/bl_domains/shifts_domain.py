@@ -279,17 +279,23 @@ def WeeklyPrefGet(request, *args, **kwargs) -> JsonResponse:  # need to check
     # else:
     # return JsonResponse(safe=False, status=404)
     if team_id in request.GET.keys():
+        t_id = int(request.GET.get(team_id))
         if employee_id in request.GET.keys():
             handler: WeeklyPrefHandler = WeeklyPrefHandler()
+            data = json.loads(request.body)
+            date = None
+            if data.get("StartDate") is not None:
+                date = int(data.get("StartDate"))
             e_id = request.GET.get(employee_id)
-            data = handler.get_employee_preferences(e_id)
+            wp = handler.get_dated_pref_by_employee_id(e_id, date)
             # if len(data) == 1: # will be 1 or 0
-            return JsonResponse(data=data.get_dict_format(), safe=False, status=201)
+            return JsonResponse(data=wp.get_dict_format(), safe=False, status=201)
         else:
             handler: WeeklyPrefHandler = WeeklyPrefHandler()
-            data = handler.get_team_preferences(
-                team_id=int(request.GET.get(team_id)))
-            data_dict = [d.get_dict_format() for d in data]
+            data = json.loads(request.body)
+            date = int(data.get("StartDate"))
+            out = handler.get_team_preferences(t_id, date=date)
+            data_dict = [d.get_dict_format() for d in out]
             return JsonResponse(data=data_dict, safe=False, status=201)
     else:
         return JsonResponse(safe=False, status=404)
@@ -413,7 +419,13 @@ def WeeklyPrefPut(request, *args, **kwargs) -> JsonResponse:
 
 
 def WeeklyPrefDelete(request, *args, **kwargs) -> JsonResponse:
-    pass
+    if employee_id in request.GET.keys():
+        e_id = request.GET.get(employee_id)
+        data = json.loads(request.body)
+        date = data.get(Start_date)
+        handler : WeeklyPrefHandler = WeeklyPrefHandler()
+        handler.delete_employee_wp_by_date(employee_id=e_id, date=date)
+        return JsonResponse(data="Deleted", safe=False)
 
 
 ''' Assignments  '''
@@ -523,8 +535,11 @@ def SchedulingAlgorithmRun(request, *args, **kwargs) -> JsonResponse:
         # data = json.loads(data)
         if INPUT_SIGNATURE in data:
             input_condition = data.get(INPUT_SIGNATURE)
+        date = None
+        if data.get(Start_date) is not None:
+            date = data.get(Start_date)
         output: AssignedWeek = schedule(
-            s_id, employee_roles=employees_roles, strategies=input_condition)
+            s_id, employee_roles=employees_roles, strategies=input_condition, date=date)
         output_data = output.get_dict_format()
         assignment_handler: Assignment_Handler = Assignment_Handler()
         assignment_handler.add_new_assignment(output)

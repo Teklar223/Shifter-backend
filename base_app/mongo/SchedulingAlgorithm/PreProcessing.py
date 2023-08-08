@@ -73,10 +73,10 @@ def derive_preferences_template_from_wp(wp: WeeklyPref):
 # TODO: check the function
 
 
-def derive_preferences_template_by_team_id(team_id):
+def derive_preferences_template_by_team_id(team_id, date):
     wph = WeeklyPrefHandler()
     output = []
-    wp_list = wph.get_team_preferences(team_id=team_id)
+    wp_list = wph.get_team_preferences(team_id=team_id, date=date)
     for wp in wp_list:
         output.append(derive_preferences_template_from_wp(wp))
     return output
@@ -105,10 +105,10 @@ Output: Scheduling templates dictinary divided by roles,
 
 """
 
-def preprocessing(shift_id: str, employees_roles:dict):
+def preprocessing(shift_id: str, employees_roles:dict, date: int):
     template, roles, team_id, sc = derive_template_for_scheduling(shift_id=shift_id)
     template_by_role = divide_scheduling_template_by_role_id(template, roles)
-    wp_list = derive_preferences_template_by_team_id(team_id=team_id)    
+    wp_list = derive_preferences_template_by_team_id(team_id=team_id, date=date)    
     wp_template_by_role = divide_employees_by_role(wp_list=wp_list, roles=roles, employees_roles=employees_roles)
     return template_by_role, wp_template_by_role, roles, sc
 

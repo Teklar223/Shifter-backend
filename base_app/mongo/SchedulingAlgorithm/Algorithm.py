@@ -15,13 +15,13 @@ from base_app.mongo.SchedulingAlgorithm.Strategies.StrategyUtils import get_stra
 # Assuming that I get a dictionary from employee_id to role_id, seperate by roles and run the algorithm seperately
 
 
-def schedule(shift_id, employee_roles, strategies):
+def schedule(shift_id, employee_roles, strategies, date):
 
     """
     get the needed data for the algorithm using the preprocessing function
     """
 
-    schedule_template, preferences_template, roles, sc = preprocessing(shift_id=shift_id, employees_roles=employee_roles)
+    schedule_template, preferences_template, roles, sc = preprocessing(shift_id=shift_id, employees_roles=employee_roles, date=date)
     week = AssignedWeek(shift_id=shift_id, start_date=sc.get_start_date(), end_date=sc.get_end_date(),
                          company_id=sc.get_company_id(), team_id=sc.get_team_id())
     

@@ -3,20 +3,24 @@ from base_app.mongo.Models.WeeklyPref import DailyPref, WeeklyPref
 from base_app.mongo.Models.Schedule import Schedule
 from base_app.mongo.Models.Shift import Shift
 from base_app.mongo.Collection_Handler import CollectionHandler
+from base_app.mongo.DateUtils import *
+import pymongo
 
 
 class WeeklyPrefHandler(CollectionHandler):
     def __init__(self):
         CollectionHandler.__init__(self, "WeeklyPreferences")
 
-    def derive_preferences_from_schedule(self, employee_id, role_id, schedule: Schedule, default_pref = False):
+    def derive_preferences_from_schedule(self, employee_id, role_id, schedule: Schedule, default_pref=False):
         # TOOD: add
         team_id = schedule.get_team_id()
         shift_id = schedule.get_shift_id()
         company_id = schedule.get_company_id()
+        start = schedule.get_start_date()
+        end = schedule.get_end_date()
         dailies = []
         wp = WeeklyPref(employee_id=employee_id, team_id=team_id, shift_id=shift_id, company_id=company_id,
-                        dailies=dailies)
+                        dailies=dailies, start_date=start, end_date=end)
         for shift in schedule.get_daily_shifts():
             date = shift.get_date()
             data = shift.get_available_shifts()
@@ -26,7 +30,7 @@ class WeeklyPrefHandler(CollectionHandler):
                 end_hour = available_shift["EndHour"]
                 shift_name = available_shift["ShiftName"]
                 answer = default_pref
-                
+
                 # employee will receive weekly preferences only for its role.
 
                 needed = available_shift["NeededRoles"]
@@ -36,7 +40,8 @@ class WeeklyPrefHandler(CollectionHandler):
                             {"StartHour": start_hour, "EndHour": end_hour, "ShiftName": shift_name, "Answer": answer})
                         # break
                 constraints = "Not relevant for now"
-            daily = DailyPref(date=date, shift_types=shift_types, constraints=constraints)
+            daily = DailyPref(
+                date=date, shift_types=shift_types, constraints=constraints)
             wp.add_daily_preference(daily)
         return wp
 
@@ -56,22 +61,26 @@ class WeeklyPrefHandler(CollectionHandler):
                 }
             }
         )
-    
+
     def update_employee_next_weekly_pref(self, employee_id, wp: WeeklyPref):
         data = wp.get_dict_format()
+        shift_id = data["ShiftID"]
         query = {
-                "EmployeeID": {"$eq": employee_id}
-                # "EmployeeID": employee_id
+            "EmployeeID": {"$eq": employee_id},
+            "ShiftID": {"$eq": shift_id}
+            # "EmployeeID": employee_id
         }
         to_update = {
-                "$set": {
-                    "Dailies": data["Dailies"],
-                    "ShiftID": data["ShiftID"],
-                    "TeamID": data["TeamID"],
-                    "CompanyID": data["CompanyID"],
-                    "EmployeeID": data["EmployeeID"]
-                }
+            "$set": {
+                "Dailies": data["Dailies"],
+                "ShiftID": data["ShiftID"],
+                "TeamID": data["TeamID"],
+                "CompanyID": data["CompanyID"],
+                "EmployeeID": data["EmployeeID"],
+                "StartDate": data["StartDate"],
+                "EndDate": data["EndDate"]
             }
+        }
         result = self.collection.find_one_and_update(query, to_update)
         # print("\n\n\n\n\n result\n\n\n\n\n\n")
         if result == None:
@@ -83,7 +92,10 @@ class WeeklyPrefHandler(CollectionHandler):
         t_id = int(doc.get("TeamID"))
         c_id = int(doc.get("CompanyID"))
         s_id = doc.get("ShiftID")
-        wp = WeeklyPref(employee_id=e_id, team_id=t_id, company_id=c_id, shift_id=s_id, dailies=[])
+        start = doc.get("StartDate")
+        end = doc.get("EndDate")
+        wp = WeeklyPref(employee_id=e_id, team_id=t_id, company_id=c_id,
+                        shift_id=s_id, dailies=[], start_date=start, end_date=end)
         dailies = doc.get("Dailies")
         for daily in dailies:
             date = int(daily.get("Date"))
@@ -102,24 +114,103 @@ class WeeklyPrefHandler(CollectionHandler):
             wp.add_daily_preference(dailypref=daily_pref)
         return wp
 
-    def get_team_preferences(self, team_id):
+    def get_team_preferences(self, team_id, date):
         wpl = []
-        query = {"TeamID": team_id}
-        docs = self.collection.find(query, {})
+        # date = next_week_to_int_format()
+        pipeline = [
+            {
+                "$match": {
+                    "TeamID": team_id,
+                    "StartDate": {"$lte": date},
+                    "EndDate": {"$gte": date}
+                }
+            },
+            {
+                "$sort": {
+                    "StartDate": pymongo.DESCENDING
+                }
+            },
+        ]
+        docs = self.collection.aggregate(pipeline=pipeline)
         for doc in docs:
-            wp = self.get_wp_from_doc(doc)
-            wpl.append(wp)
+            wpl.append(self.get_wp_from_doc(doc))
+
+        # query = {"TeamID": team_id}
+        # docs = self.collection.find(query, {})
+        # for doc in docs:
+        #     wp = self.get_wp_from_doc(doc)
+        #     wpl.append(wp)
         return wpl
-    
-    def get_employee_preferences(self, employee_id):
+
+    def get_employee_preferences(self, employee_id, shift_id):
         wpl = []
-        query = {"EmployeeID": employee_id}
+        query = {"EmployeeID": employee_id, "ShiftID": shift_id}
         doc = self.collection.find_one(query, {})
         wp = self.get_wp_from_doc(doc=doc)
         # for doc in docs:
         #     wp = self.get_wp_from_doc(doc)
         #     wpl.append(wp)
         return wp
+
+    def get_next_week_pref_by_employee_id(self, employee_id):
+        '''
+        returns a WeeklyPref object
+        '''
+        date = next_week_to_int_format()
+        wp = None
+        pipeline = [
+            {
+                "$match": {
+                    "EmployeeID": employee_id,
+                    "StartDate": {"$lte": date},
+                    "EndDate": {"$gte": date}
+                }
+            },
+            {
+                "$sort": {
+                    "StartDate": pymongo.DESCENDING
+                }
+            },
+        ]
+        docs = self.collection.aggregate(pipeline=pipeline)
+        for doc in docs:
+            wp = self.get_wp_from_doc(doc)
+        return wp
+    
+    def get_dated_pref_by_employee_id(self, employee_id, date):
+        '''
+        returns a WeeklyPref object
+        '''
+        wp = None
+        pipeline = [
+            {
+                "$match": {
+                    "EmployeeID": employee_id,
+                    "StartDate": {"$lte": date},
+                    "EndDate": {"$gte": date}
+                }
+            },
+            {
+                "$sort": {
+                    "StartDate": pymongo.DESCENDING
+                }
+            },
+        ]
+        docs = self.collection.aggregate(pipeline=pipeline)
+        for doc in docs:
+            wp = self.get_wp_from_doc(doc)
+        return wp
+    
+    """
+    Delete
+    """
+
+    def delete_employee_wp_by_date(self, employee_id, date):
+        wp = self.get_dated_pref_by_employee_id(employee_id=employee_id, date=date)
+        shift_id = wp.get_shift_id()
+        if wp is None:
+            return
+        self.collection.delete_one({"EmployeeID": employee_id, "ShiftID": shift_id})
 
 
 # s = Shift(1, 1, 1, [{"ShiftName": "Evening", "StartHour": 1600, "EndHour": 2330, "NeededRoles":
