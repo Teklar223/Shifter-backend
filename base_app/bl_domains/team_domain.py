@@ -135,7 +135,10 @@ def TeamEmployeeGet(request, *args, **kwargs) -> JsonResponse:
         pass
 
     data = []
-    users = Employee.objects.filter(team_id__in=team_ids)
+    if team_ids:
+        users = Employee.objects.filter(team_id__in=team_ids)
+    else:
+        users = Employee.objects.filter(company_id=kwargs["company_id"])
     serialized_users = EmployeeSerializer(users, many=True).data
     data.extend(serialized_users)
 
