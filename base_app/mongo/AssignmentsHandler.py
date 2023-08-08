@@ -15,8 +15,13 @@ class Assignment_Handler(CollectionHandler):
     """
 
     def add_new_assignment(self, assignment: AssignedWeek):
-        assignment_dict = assignment.get_dict_format()
-        self.collection.insert_one(assignment_dict)
+        flag = self.update_assignment(assignment=assignment)
+        if flag is True:
+            return
+        else:
+            assignment_dict = assignment.get_dict_format()
+            self.collection.insert_one(assignment_dict)
+
 
     """
     CRUD - Read
@@ -78,7 +83,7 @@ class Assignment_Handler(CollectionHandler):
         for doc in docs:
             assignment = AssignedWeek.dict_to_week_obj(doc)
         return assignment
-    
+
     def get_bounded_dated_assignments_by_team_id(self, team_id, start_date, end_date):
         '''
         returns a Schedule object
@@ -107,16 +112,30 @@ class Assignment_Handler(CollectionHandler):
     CRUD - Update
     """
 
+    """
+    Update assignment function, is used also in order to know if an assignment for the specific ShiftID exists,
+    since if it doesn't exist, it will not do anything.
+    Outputs:
+    True: The assignment already exists and already updated, therefore there is no need to create new document.
+    False: The assignment doesn't exist, therefore nothing will be updated, and we will need to create new document.
+    """
+
     def update_assignment(self, assignment: AssignedWeek):
         shift_id = assignment.get_shift_id()
         start_date = assignment.get_start_date()
         end_date = assignment.get_end_date()
         assignment_dict = assignment.get_dict_format()
+        team_id = assignment.get_team_id()
+        company_id = assignment.get_company_id()
         dailies = assignment_dict.get(Dailies)
-        self.collection.find_one_and_update(
-            {Shift_id: shift_id},
-            {"$set":
-             {f"{Shift_id}": shift_id, f"{Start_date}": start_date, f"{End_date}": end_date,
-              f"{Dailies}": dailies}
-             }, upsert=True
-        )
+        query = {Shift_id: shift_id}
+        to_update = {"$set":
+                     {f"{Shift_id}": shift_id, f"{Start_date}": start_date,
+                      f"{End_date}": end_date, f"{Team_id}": team_id,
+                      f"{Company_id}": company_id, f"{Dailies}": dailies}
+                     }
+        result = self.collection.find_one_and_update(
+            query, to_update, upsert=False)
+        if result is not None:
+            return True
+        return False
